@@ -4,6 +4,7 @@ const seed = require('../db/seeds/seed.js')
 const testData = require('../db/data/test-data/index.js')
 const db = require('../db/connection.js')
 
+
 beforeEach(() => {
     return seed(testData)
 })
@@ -89,6 +90,42 @@ describe('news-project', () => {
                 expect(articles[articles.length - 1]).toHaveProperty('created_at', '2020-01-07T14:08:00.000Z')
             })
         })
+    })
 
+    describe('/api/articles/:article_id', () => {
+        test('GET: 200 - a get request should response with status 200', () => {
+            return request(app).get('/api/articles/2').expect(200);
+        })
+
+        test('GET: 200 - a get request should return an article object', () => {
+            return request(app).get('/api/articles/2').expect(200)
+            .then(({body: {article}}) => {
+                expect(article).toBeInstanceOf(Object);
+            })
+        })
+
+        test('GET: 200 - a get request should return an object with following properties', () => {
+            return request(app).get('/api/articles/5').expect(200)
+            .then(({body: {article}}) => {
+                expect(article).toEqual(expect.objectContaining({
+                    author : expect.any(String),
+                    title : expect.any(String),
+                    article_id : expect.any(Number),
+                    body : expect.any(String),
+                    topic : expect.any(String),
+                    created_at : expect.any(String),
+                    votes : expect.any(Number),
+                    article_img_url : expect.any(String)
+                }))
+               
+            })
+        })
+
+        test('GET: 404 - a get request should return a message "Not Found" when "article_id" does not exist', () => {
+            return request(app).get('/api/articles/100').expect(404)
+            .then(({body : {message}}) => {
+                expect(message).toEqual('Not Found')
+            })
+        })
     })
 })

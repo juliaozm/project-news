@@ -24,7 +24,24 @@ const fetchArticles = (sort_by='article_id') => {
     .then(({rows}) => rows)
 }
 
+const fetchArticleById = (article_id) => {
+    const sqlString = 
+    `
+        SELECT * FROM articles
+        WHERE article_id = $1;
+    `
+    return db.query(sqlString, [article_id])
+    .then(({rows: [article]}) => {
+        if (!article) {
+            return Promise.reject({status: 404, message: 'Not Found'})
+        } else {
+            return article
+        }
+    })
+}
+
 module.exports = {
     fetchTopics,
     fetchArticles,
+    fetchArticleById
 }
