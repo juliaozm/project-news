@@ -40,4 +40,55 @@ describe('news-project', () => {
             })
         })
     })
+
+    describe('/api/articles', () => {
+        test('GET: 200 - a get request should response with status 200', () => {
+            return request(app).get('/api/articles').expect(200);
+        })
+
+        test('GET: 200 - a get request should return array of article objects', () => {
+            return request(app).get('/api/articles').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles.length).toBeGreaterThan(0);
+                expect(articles).toBeInstanceOf(Array);
+                articles.forEach(article => {
+                    expect(article).toBeInstanceOf(Object);
+                })
+            })
+        })
+
+        test('GET: 200 - a get request should return array of objects with following article properties', () => {
+            return request(app).get('/api/articles').expect(200)
+            .then(({body: {articles}}) => {
+                articles.forEach(article => {
+                    expect(article).toHaveProperty('author', expect.any(String));
+                    expect(article).toHaveProperty('title', expect.any(String));
+                    expect(article).toHaveProperty('article_id', expect.any(Number));
+                    expect(article).toHaveProperty('topic', expect.any(String));
+                    expect(article).toHaveProperty('created_at', expect.any(String));
+                    expect(article).toHaveProperty('votes', expect.any(Number));
+                    expect(article).toHaveProperty('article_img_url', expect.any(String));
+                })
+            })
+        })
+
+        test('GET: 200 - a get request should return array of objects with a new property "comment_count"', () => {
+            return request(app).get('/api/articles').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles.length).toBeGreaterThan(0);
+                articles.forEach(article => {
+                    expect(article).toHaveProperty('comment_count', expect.any(String));
+                })
+            })
+        })
+
+        test('GET: 200 - a get request should return array of objects sorted by "created_at" in a DESC order', () => {
+            return request(app).get('/api/articles/?sort_by=created_at').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles[0]).toHaveProperty('created_at', '2020-11-03T09:12:00.000Z')
+                expect(articles[articles.length - 1]).toHaveProperty('created_at', '2020-01-07T14:08:00.000Z')
+            })
+        })
+
+    })
 })

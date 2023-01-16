@@ -1,10 +1,12 @@
 const express = require('express')
 const app = express()
 const {
-    getTopics
+    getTopics,
+    getArticles,
 } = require('../db/controllers/controllers.js')
 
 app.get('/api/topics', getTopics)
+app.get('/api/articles', getArticles)
 
 app.use((err, request, response, next) => {
     console.log(err)
