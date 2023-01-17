@@ -10,7 +10,7 @@ const fetchTopics = () => {
     })
 }
 
-const fetchArticles = (sort_by='article_id') => {
+const fetchArticles = () => {
     const sqlString = 
     `
         SELECT articles.*, COUNT(comments.comment_id) as comment_count
@@ -18,7 +18,7 @@ const fetchArticles = (sort_by='article_id') => {
         LEFT JOIN comments
         ON articles.article_id = comments.article_id
         GROUP BY articles.article_id
-        ORDER BY ${sort_by} DESC;
+        ORDER BY created_at DESC;
     `
     return db.query(sqlString)
     .then(({rows}) => rows)
