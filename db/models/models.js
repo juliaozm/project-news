@@ -24,7 +24,25 @@ const fetchArticles = () => {
     .then(({rows}) => rows)
 }
 
+const fetchCommentsByArticleId = (article_id) => {
+    const sqlString = 
+    `
+        SELECT * FROM comments
+        WHERE article_id = $1
+        ORDER BY created_at DESC;
+    `
+    return db.query(sqlString, [article_id])
+    .then(({rowCount, rows}) => {
+        if (rowCount === 0) {
+            return Promise.reject({status: 404, message: 'Not Found'})
+        } else {
+            return rows
+        }
+    })
+}
+
 module.exports = {
     fetchTopics,
     fetchArticles,
+    fetchCommentsByArticleId
 }

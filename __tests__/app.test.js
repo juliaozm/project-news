@@ -89,6 +89,57 @@ describe('news-project', () => {
                 expect(articles[articles.length - 1]).toHaveProperty('created_at', '2020-01-07T14:08:00.000Z')
             })
         })
+    })
 
+    describe('/api/articles/:article_id/comments', () => {
+        test('GET: 200 - a get request should response with status 200', () => {
+            return request(app).get('/api/articles/1/comments').expect(200)
+        })
+
+        test('GET: 200 - a get request should return an array of comment objects', () => {
+            return request(app).get('/api/articles/1/comments').expect(200)
+            .then(({body: {comments}}) => {
+                expect(comments.length).toBeGreaterThan(0);
+                expect(comments).toBeInstanceOf(Array);
+                comments.forEach(comment => expect(comment).toBeInstanceOf(Object));
+            })
+        })
+
+        test('GET: 200 - a get request should return an array of objects with following properties', () => {
+            return request(app).get('/api/articles/1/comments').expect(200)
+            .then(({body: {comments}}) => {
+                comments.forEach(comment => 
+                    expect(comment).toEqual(expect.objectContaining({
+                        comment_id: expect.any(Number),
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        article_id: expect.any(Number)
+                    }))
+                );
+            })
+        })
+
+        test('GET: 200 - a get request should return array of objects which is by default sorted by "created_at" in a DESC order', () => {
+            return request(app).get('/api/articles/1/comments').expect(200)
+            .then(({body: {comments}}) => {
+                expect(comments).toBeSortedBy('created_at', { descending: true })
+            })
+        })
+
+        test('GET: 404 - a get request should return a message "Not Found" if the article_id does not exist', () => {
+            return request(app).get('/api/articles/2/comments').expect(404)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Not Found');
+            })
+        })
+
+        test('GET: 400 - a get request should return a message "Bad Request" when bad article_id passed', () => {
+            return request(app).get('/api/articles/notAnId/comments').expect(400)
+            .then(({body: {message}}) => {
+               expect(message).toBe('Bad Request');
+            })
+        })
     })
 })
