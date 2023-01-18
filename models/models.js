@@ -1,4 +1,4 @@
-const db = require('../connection.js')
+const db = require('../db/connection.js')
 
 const fetchTopics = () => {
     const sqlString = 
@@ -87,11 +87,35 @@ const addNewComment = (article_id, newCommentData) => {
     })
 }
 
+const changeVotesOnArticle = (inc_votes, article_id) => {
+    if (!inc_votes || typeof inc_votes !== 'number') {
+        return Promise.reject({status: 400, message: 'Bad Request'})
+    }
+    const sqlString = 
+    `
+        UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        RETURNING *;
+    `
+    return db.query(sqlString, [inc_votes, article_id])
+    .then(({rowCount, rows}) =>{
+        if (rowCount === 0) {
+            return Promise.reject({status: 404, message: 'This article does not exist'})
+        } else {
+            let [article] = rows
+            article.created_at = Date.parse(article.created_at)
+            return article
+        }
+    })
+}
+
 
 
 module.exports = {
     fetchTopics,
     fetchArticles,
     fetchCommentsByArticleId,
-    addNewComment
+    addNewComment,
+    changeVotesOnArticle
 }

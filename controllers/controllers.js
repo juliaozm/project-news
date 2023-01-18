@@ -3,7 +3,8 @@ const {
     fetchTopics,
     fetchArticles,
     fetchCommentsByArticleId,
-    addNewComment
+    addNewComment,
+    changeVotesOnArticle,
  } = require('../models/models.js')
 
 const getTopics = (request, response, next) => {
@@ -42,9 +43,20 @@ const postCommentByArticleId = (request, response, next) => {
     .catch(err => next(err))
 }
 
+const updateArticle = (request, response, next) => {
+    const {article_id} = request.params;
+    const {inc_votes} = request.body;
+    changeVotesOnArticle(inc_votes, article_id)
+    .then(article => {
+        response.status(200).send({article })
+    })
+    .catch(err => next(err))
+}
+
 module.exports = {
     getTopics,
     getArticles,
     getCommentsByArticleId,
-    postCommentByArticleId
+    postCommentByArticleId,
+    updateArticle,
 }

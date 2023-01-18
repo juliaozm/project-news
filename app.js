@@ -4,8 +4,9 @@ const {
     getTopics,
     getArticles,
     getCommentsByArticleId,
-    postCommentByArticleId
-} = require('./db/controllers/controllers.js')
+    postCommentByArticleId,
+    updateArticle
+} = require('./controllers/controllers.js')
 
 app.use(express.json())
 
@@ -13,6 +14,7 @@ app.get('/api/topics', getTopics)
 app.get('/api/articles', getArticles)
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 app.post('/api/articles/:article_id/comments', postCommentByArticleId)
+app.patch('/api/articles/:article_id', updateArticle)
 
 
 app.use((err, request, response, next) => {
