@@ -377,4 +377,30 @@ describe('news-project', () => {
             })
         })
     })
+
+    describe('GET: /api/users', () => {
+        test('GET: 200 - a get request should response with an array of user objects', () => {
+            return request(app).get('/api/users').expect(200)
+            .then(({body: {users}}) => {
+                expect(users).toBeInstanceOf(Array);
+                expect(users.length).toBeGreaterThan(0);
+                users.forEach(user => {
+                    expect(user).toBeInstanceOf(Object)
+                })
+            })
+        })
+
+        test('GET: 200 - a get request should response with an array of objects with following properties', () => {
+            return request(app).get('/api/users').expect(200)
+            .then(({body: {users}}) => {
+                users.forEach(user => {
+                    expect(user).toEqual(expect.objectContaining({
+                        username: expect.any(String),
+                        name: expect.any(String),
+                        avatar_url: expect.any(String)
+                    }))
+                })
+            })
+        })
+    })
 })

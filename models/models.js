@@ -110,11 +110,20 @@ const changeVotesOnArticle = (inc_votes, article_id) => {
     })
 }
 
+const fetchUsers = () => {
+    const sqlString = 
+    `
+        SELECT * FROM users;
+    `
+    return db.query(sqlString)
+    .then(({rows}) => rows)
+}
 
 
 module.exports = {
     fetchTopics,
     fetchArticles,
+    fetchUsers,
     fetchCommentsByArticleId,
     addNewComment,
     changeVotesOnArticle
