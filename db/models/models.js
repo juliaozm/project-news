@@ -1,3 +1,4 @@
+const { response } = require('../../app.js')
 const db = require('../connection.js')
 
 const fetchTopics = () => {
@@ -25,19 +26,43 @@ const fetchArticles = () => {
 }
 
 const fetchCommentsByArticleId = (article_id) => {
-    const sqlString = 
+    // check that this article exists in the articles database
+    const articleString = 
     `
-        SELECT * FROM comments
-        WHERE article_id = $1
-        ORDER BY created_at DESC;
+        SELECT * FROM articles
+        WHERE article_id = $1;
     `
-    return db.query(sqlString, [article_id])
+    return db.query(articleString, [article_id])
     .then(({rowCount, rows}) => {
         if (rowCount === 0) {
-            return Promise.reject({status: 404, message: 'Not Found'})
+            // article doesn't exist
+            return Promise.reject({status: 404, message: 'This article does not exist'})
         } else {
-            return rows
+            // article exists
+            return rows[0]
         }
+    })
+    .then((article) => {
+        // fetch comments
+        const commentSQL = 
+        `
+            SELECT * FROM comments
+            WHERE article_id = $1
+            ORDER BY created_at DESC;
+        `
+        return db.query(commentSQL, [article.article_id])
+        .then(({rowCount, rows}) => {
+            if (rowCount === 0) {
+                // no comments 
+                return [{
+                    message: 'No comments associated with this article',
+                    comments: []
+                }]
+            } else {
+                // comments exist 
+                return rows
+            }
+        })
     })
 }
 

@@ -4,7 +4,7 @@ const {
     getTopics,
     getArticles,
     getCommentsByArticleId,
-} = require('../db/controllers/controllers.js')
+} = require('./db/controllers/controllers.js')
 
 app.get('/api/topics', getTopics)
 app.get('/api/articles', getArticles)
