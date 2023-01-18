@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../db/app.js')
+const app = require('../app.js')
 const seed = require('../db/seeds/seed.js')
 const testData = require('../db/data/test-data/index.js')
 const db = require('../db/connection.js')
@@ -92,7 +92,7 @@ describe('news-project', () => {
         })
     })
 
-    describe('/api/articles/:article_id', () => {
+    describe('GET: /api/articles/:article_id', () => {
         test('GET: 200 - a get request should response with status 200', () => {
             return request(app).get('/api/articles/2').expect(200);
         })
@@ -121,10 +121,17 @@ describe('news-project', () => {
             })
         })
 
-        test('GET: 404 - a get request should return a message "Not Found" when "article_id" does not exist', () => {
+        test('GET: 404 - returns a message "Not Found" when "article_id" does not exist', () => {
             return request(app).get('/api/articles/100').expect(404)
             .then(({body : {message}}) => {
                 expect(message).toEqual('Not Found')
+            })
+        })
+
+        test('GET: 400 - returns a message "Bad Request" when a bad "article_id" is passed', () => {
+            return request(app).get('/api/articles/notAnumber').expect(400)
+            .then(({body : {message}}) => {
+                expect(message).toEqual('Bad Request')
             })
         })
     })
