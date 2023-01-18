@@ -42,6 +42,13 @@ const fetchCommentsByArticleId = (article_id) => {
 }
 
 const addNewComment = (article_id, newCommentData) => {
+    if (Object.keys(newCommentData).length <= 1 || 
+        !newCommentData.username || 
+        !newCommentData.body
+    ) {
+        return Promise.reject({status: 400, message: 'Bad Request'})
+    }
+
     const {username, body, votes = 0} = newCommentData
 
     // checking if the username exists in the users database

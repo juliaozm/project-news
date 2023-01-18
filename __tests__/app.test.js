@@ -155,13 +155,37 @@ describe('news-project', () => {
             .expect(201)
             .then(({body: {comment}}) => {
                 expect(comment).toBeInstanceOf(Object);
+                
             })
         })
 
-        test('POST: 201 - responses with an object that cointains the following properties', () => {
+        test('POST: 201 - responses with a comment object that cointains the following properties when passed a valid request body', () => {
             const newComment = {
                 username: 'icellusedkars',
                 body: 'Great comment!'
+            }
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(201)
+            .then(({body: {comment}}) => {
+                expect(comment).toEqual(expect.objectContaining({
+                    article_id: expect.any(Number),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    votes: expect.any(Number),
+                    created_at: expect.any(Number),
+                }));
+            })
+        })
+
+        test('POST: 201 - responses with a comment object that ignores any additional keys passed in a request body', () => {
+            const newComment = {
+                username: 'icellusedkars',
+                body: 'Great comment!',
+                greetings: 'Hello!',
+                age: 32,
+                city: 'London'
             }
             return request(app)
             .post('/api/articles/1/comments')
@@ -192,7 +216,7 @@ describe('news-project', () => {
             })
         })
 
-        test('POST: 400 - returns a message "Bad request" when a received object is empty', () => {
+        test('POST: 400 - returns a message "Bad request" when a request body is empty', () => {
             const newComment = {}
             return request(app)
             .post('/api/articles/1/comments')
@@ -203,7 +227,7 @@ describe('news-project', () => {
             })
         })
 
-        test('POST: 400 - returns a message "Bad request" when a received object missing a required "body" property', () => {
+        test('POST: 400 - returns a message "Bad request" when a request body missing a required "body" property', () => {
             const newComment = {
                 username: 'icellusedkars'
             }
@@ -216,7 +240,7 @@ describe('news-project', () => {
             })
         })
 
-        test('POST: 400 - returns a message "Bad request" when a received object missing a required "username" property', () => {
+        test('POST: 400 - returns a message "Bad request" when a request body missing a required "username" property', () => {
             const newComment = {
                 body: 'Great comment!'
             }
@@ -229,13 +253,27 @@ describe('news-project', () => {
             })
         })
 
-        test('POST: 400 - returns a message "Bad request" when a received object has empty values', () => {
+        test('POST: 400 - returns a message "Bad request" when a request body has empty values', () => {
             const newComment = {
                 username: '',
                 body: ''
             }
             return request(app)
             .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request');
+            })
+        })
+
+        test('POST: 400 - returns a message "Bad request" when invalid article_id is passed', () => {
+            const newComment = {
+                username: 'icellusedkars',
+                body: 'Great comment!'
+            }
+            return request(app)
+            .post('/api/articles/notAnumber/comments')
             .send(newComment)
             .expect(400)
             .then(({body: {message}}) => {

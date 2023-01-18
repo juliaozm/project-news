@@ -35,13 +35,6 @@ const postCommentByArticleId = (request, response, next) => {
     const {article_id} = request.params;
     const newCommentData = request.body;
 
-    if (Object.keys(newCommentData).length <= 1 || 
-        !newCommentData.username || 
-        !newCommentData.body
-    ) {
-        response.status(400).send({message: 'Bad Request'})
-        next()
-    }
     addNewComment(article_id, newCommentData)
     .then((comment) => {
         response.status(201).send({comment})
