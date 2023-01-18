@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../db/app.js')
+const app = require('../app.js')
 const seed = require('../db/seeds/seed.js')
 const testData = require('../db/data/test-data/index.js')
 const db = require('../db/connection.js')
@@ -91,7 +91,7 @@ describe('news-project', () => {
         })
     })
 
-    describe('/api/articles/:article_id/comments', () => {
+    describe('GET: /api/articles/:article_id/comments', () => {
         test('GET: 200 - a get request should response with status 200', () => {
             return request(app).get('/api/articles/1/comments').expect(200)
         })
@@ -139,6 +139,107 @@ describe('news-project', () => {
             return request(app).get('/api/articles/notAnId/comments').expect(400)
             .then(({body: {message}}) => {
                expect(message).toBe('Bad Request');
+            })
+        })
+    })
+
+    describe('POST: /api/articles/:article_id/comments', () => {
+        test('POST: 201 - responses with a comment object if "username" exists in users database and "body" is valid', () => {
+            const newComment = {
+                username: 'icellusedkars',
+                body: 'Great comment!'
+            }
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(201)
+            .then(({body: {comment}}) => {
+                expect(comment).toBeInstanceOf(Object);
+            })
+        })
+
+        test('POST: 201 - responses with an object that cointains the following properties', () => {
+            const newComment = {
+                username: 'icellusedkars',
+                body: 'Great comment!'
+            }
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(201)
+            .then(({body: {comment}}) => {
+                expect(comment).toEqual(expect.objectContaining({
+                    article_id: expect.any(Number),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    votes: expect.any(Number),
+                    created_at: expect.any(Number),
+                }));
+            })
+        })
+
+        test('POST: 404 - returns a message "This user does not exist" when there is no such "username" in users database', () => {
+            const newComment = {
+                username: 'ololo',
+                body: 'Great comment!'
+            }
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(404)
+            .then(({body: {message}}) => {
+                expect(message).toBe('This user does not exist');
+            })
+        })
+
+        test('POST: 400 - returns a message "Bad request" when a received object is empty', () => {
+            const newComment = {}
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request');
+            })
+        })
+
+        test('POST: 400 - returns a message "Bad request" when a received object missing a required "body" property', () => {
+            const newComment = {
+                username: 'icellusedkars'
+            }
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request');
+            })
+        })
+
+        test('POST: 400 - returns a message "Bad request" when a received object missing a required "username" property', () => {
+            const newComment = {
+                body: 'Great comment!'
+            }
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request');
+            })
+        })
+
+        test('POST: 400 - returns a message "Bad request" when a received object has empty values', () => {
+            const newComment = {
+                username: '',
+                body: ''
+            }
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request');
             })
         })
     })

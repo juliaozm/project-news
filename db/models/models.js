@@ -41,8 +41,50 @@ const fetchCommentsByArticleId = (article_id) => {
     })
 }
 
+const addNewComment = (article_id, newCommentData) => {
+    const {username, body, votes = 0} = newCommentData
+
+    // checking if the username exists in the users database
+    const userString =  
+    `
+        SELECT * FROM users
+        WHERE username = $1;
+    
+    `
+    return db.query(userString, [username])
+    .then(({rowCount, rows}) => {
+        if (rowCount === 0) {
+            // user doesn't exist
+            return Promise.reject({status: 404, message: 'This user does not exist'})
+        } else {
+            // user exists
+            return rows[0]
+        }
+    })
+    .then(user => {
+        // adding a comment to the comments database
+        const created_at = new Date()
+        const commentString = 
+        `
+            INSERT INTO comments
+                (article_id, author, body, votes, created_at)
+            VALUES
+                ($1, $2, $3, $4, $5)
+            RETURNING *;
+        `
+        return db.query(commentString, [article_id, user.username, body, votes, created_at])
+        .then(({rows : [comment]}) => {
+            comment.created_at = Date.parse(comment.created_at)
+            return comment
+        })
+    })
+}
+
+
+
 module.exports = {
     fetchTopics,
     fetchArticles,
-    fetchCommentsByArticleId
+    fetchCommentsByArticleId,
+    addNewComment
 }
