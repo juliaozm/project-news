@@ -27,8 +27,12 @@ const fetchArticles = () => {
 const fetchArticleById = (article_id) => {
     const sqlString = 
     `
-        SELECT * FROM articles
-        WHERE article_id = $1;
+        SELECT articles.*, COUNT(comments.comment_id) as comment_count
+        FROM articles
+        LEFT JOIN comments
+        ON articles.article_id = comments.article_id
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id;
     `
     return db.query(sqlString, [article_id])
     .then(({rows: [article]}) => {
