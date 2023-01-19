@@ -42,6 +42,22 @@ const fetchArticles = (topic, sort_by = 'created_at', order = 'DESC') => {
     })
 }
 
+const fetchArticleById = (article_id) => {
+    const sqlString = 
+    `
+        SELECT * FROM articles
+        WHERE article_id = $1;
+    `
+    return db.query(sqlString, [article_id])
+    .then(({rows: [article]}) => {
+        if (!article) {
+            return Promise.reject({status: 404, message: 'Not Found'})
+        } else {
+            return article
+        }
+    })
+}
+
 const fetchCommentsByArticleId = (article_id) => {
     // check that this article exists in the articles database
     const articleString = 
@@ -166,6 +182,7 @@ module.exports = {
     fetchTopics,
     fetchArticles,
     fetchUsers,
+    fetchArticleById,
     fetchCommentsByArticleId,
     addNewComment,
     changeVotesOnArticle,
