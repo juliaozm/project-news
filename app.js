@@ -4,12 +4,20 @@ const {
     getTopics,
     getArticles,
     getArticleById,
-} = require('./db/controllers/controllers.js')
+} = require('./controllers/controllers.js')
 
 app.get('/api/topics', getTopics)
 app.get('/api/articles', getArticles)
 app.get('/api/articles/:article_id', getArticleById)
 
+
+app.use((err, request, response, next) => {
+    if (err.status && err.message) {
+        response.status(err.status).send({message: err.message})
+    } else {
+        next(err)
+    }
+})
 
 app.use((err, request, response, next) => {
     if (err.code === '22P02') {
@@ -20,16 +28,8 @@ app.use((err, request, response, next) => {
 })
 
 app.use((err, request, response, next) => {
-    if (err) {
-        response.status(err.status).send({message: err.message})
-    } else {
-        next(err)
-    }
-})
-
-app.use((err, request, response, next) => {
     console.log(err)
-    response.status(500).send({message: 'Ooops something went wrong!'})
+    response.status(500).send({message: 'Ooops something went wrong!'});
 })
 
 module.exports = app
