@@ -413,10 +413,11 @@ describe('news-project', () => {
         })
     })
 
-    describe.only('GET: /api/articles (queries)', () => {
-        test('GET 200 - returs an array that is sorted by default by "created_at" and in DESC order', () => {
+    describe('GET: /api/articles (queries)', () => {
+        test('GET 200 - returs an array that is sorted by default by "created_at" and in DESC order with all articles', () => {
             return request(app).get('/api/articles').expect(200)
             .then(({body: {articles}}) => {
+                expect(articles.length).toBe(12)
                 expect(articles).toBeSortedBy('created_at', {descending: true})
             })
         })
@@ -424,6 +425,7 @@ describe('news-project', () => {
         test('GET 200 - returs an array that is sorted by "author" and by default in DESC order', () => {
             return request(app).get('/api/articles/?sort_by=author').expect(200)
             .then(({body: {articles}}) => {
+                expect(articles.length).toBe(12)
                 expect(articles).toBeSortedBy('author', {descending: true})
             })
         })
@@ -431,6 +433,7 @@ describe('news-project', () => {
         test('GET 200 - returs an array that is sorted by default by "created_at" and in ASC order', () => {
             return request(app).get('/api/articles/?order=asc').expect(200)
             .then(({body: {articles}}) => {
+                expect(articles.length).toBe(12)
                 expect(articles).toBeSortedBy('created_at', {descending: false})
             })
         })
@@ -438,6 +441,7 @@ describe('news-project', () => {
         test('GET 200 - returs an array that is sorted by "author" and in ASC order', () => {
             return request(app).get('/api/articles/?sort_by=author&order=asc').expect(200)
             .then(({body: {articles}}) => {
+                expect(articles.length).toBe(12)
                 expect(articles).toBeSortedBy('author', {descending: false})
             })
         })
@@ -446,6 +450,7 @@ describe('news-project', () => {
             and is sorted by dcefault by "created_at" and in DESC order`, () => {
             return request(app).get('/api/articles/?topic=mitch').expect(200)
             .then(({body: {articles}}) => {
+                expect(articles.length).toBe(11)
                 expect(articles).toBeSortedBy('created_at', {descending: true})
                 articles.forEach(article => {
                     expect(article).toHaveProperty('topic', 'mitch')
@@ -457,6 +462,7 @@ describe('news-project', () => {
             and that are sorted by "author" and in ASC order`, () => {
             return request(app).get('/api/articles/?topic=mitch&sort_by=author&order=asc').expect(200)
             .then(({body: {articles}}) => {
+                expect(articles.length).toBe(11)
                 expect(articles).toBeSortedBy('author', {descending: false})
                 articles.forEach(article => {
                     expect(article).toHaveProperty('topic', 'mitch')
@@ -464,38 +470,39 @@ describe('news-project', () => {
             })
         })
 
-        test(`GET 404 - returs `, () => {
+        test(`GET 400 - returns a message 'Bad Request' when "sort_by" and "order" are listed but not specified`, () => {
+            return request(app).get('/api/articles/?sort_by&order').expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request')
+            })
+        })
+
+        test(`GET 404 - returns a message 'Not Found' when "sort_by" specified by not existed value`, () => {
+            return request(app).get('/api/articles/?sort_by=date').expect(404)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Not Found')
+            })
+        })
+
+        test(`GET 400 - returns a message 'Bad Request' when "order" is specified with an invalid input`, () => {
+            return request(app).get('/api/articles/?order=desk').expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request')
+            })
+        })
+
+
+        test(`GET 404 - returns a message 'Not Found' when "topic" specified by not existed value`, () => {
             return request(app).get('/api/articles/?topic=dog').expect(404)
             .then(({body: {message}}) => {
                 expect(message).toBe('Not Found')
             })
         })
 
-        // test.only(`GET 404 - returs `, () => {
-        //     return request(app).get('/api/articles/?topic=').expect(400)
-        //     .then(({body: {message}}) => {
-        //         expect(message).toBe('Not Found')
-        //     })
-        // })
-
-        // test(`GET 404 - returs `, () => {
-        //     return request(app).get('/api/articles/?sort_by=date').expect(404)
-        //     .then(({body: {message}}) => {
-        //         expect(message).toBe('Not Found')
-        //     })
-        // })
-
-        test(`GET 400 - returs `, () => {
-            return request(app).get('/api/articles/?sort_by').expect(400)
+        test(`GET 404 - returns a message 'Not Found' when "topic" is listed but not specified`, () => {
+            return request(app).get('/api/articles/?topic').expect(404)
             .then(({body: {message}}) => {
-                expect(message).toBe('Bad Request')
-            })
-        })
-
-        test(`GET 400 - returs `, () => {
-            return request(app).get('/api/articles/?order=desk').expect(400)
-            .then(({body: {message}}) => {
-                expect(message).toBe('Bad Request')
+                expect(message).toBe('Not Found')
             })
         })
 
