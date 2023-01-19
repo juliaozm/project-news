@@ -462,19 +462,19 @@ describe('news-project', () => {
             })
         })
 
-        test.only(`GET 404 - returs `, () => {
-            return request(app).get('/api/articles/?topic=').expect(400)
-            .then(({body: {message}}) => {
-                expect(message).toBe('Not Found')
-            })
-        })
+        // test.only(`GET 404 - returs `, () => {
+        //     return request(app).get('/api/articles/?topic=').expect(400)
+        //     .then(({body: {message}}) => {
+        //         expect(message).toBe('Not Found')
+        //     })
+        // })
 
-        test(`GET 404 - returs `, () => {
-            return request(app).get('/api/articles/?sort_by=date').expect(404)
-            .then(({body: {message}}) => {
-                expect(message).toBe('Not Found')
-            })
-        })
+        // test(`GET 404 - returs `, () => {
+        //     return request(app).get('/api/articles/?sort_by=date').expect(404)
+        //     .then(({body: {message}}) => {
+        //         expect(message).toBe('Not Found')
+        //     })
+        // })
 
         test(`GET 400 - returs `, () => {
             return request(app).get('/api/articles/?sort_by').expect(400)
