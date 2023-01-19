@@ -8,6 +8,7 @@ const {
     getCommentsByArticleId,
     postCommentByArticleId,
     updateArticle,
+    deleteCommentById
 } = require('./controllers/controllers.js')
 
 app.use(express.json())
@@ -19,6 +20,7 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 app.post('/api/articles/:article_id/comments', postCommentByArticleId)
 app.patch('/api/articles/:article_id', updateArticle)
 app.get('/api/users', getUsers)
+app.delete('/api/comments/:comment_id', deleteCommentById)
 
 app.use((err, request, response, next) => {
     if (err.status && err.message) {
