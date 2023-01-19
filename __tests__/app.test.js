@@ -432,6 +432,111 @@ describe('news-project', () => {
         })
     })
 
+    describe('GET: /api/users', () => {
+        test('GET: 200 - a get request should response with an array of user objects', () => {
+            return request(app).get('/api/users').expect(200)
+            .then(({body: {users}}) => {
+                expect(users).toBeInstanceOf(Array);
+                expect(users.length).toBeGreaterThan(0);
+                users.forEach(user => {
+                    expect(user).toBeInstanceOf(Object)
+                })
+            })
+        })
+
+        test('GET: 200 - a get request should response with an array of objects with following properties', () => {
+            return request(app).get('/api/users').expect(200)
+            .then(({body: {users}}) => {
+                users.forEach(user => {
+                    expect(user).toEqual(expect.objectContaining({
+                        username: expect.any(String),
+                        name: expect.any(String),
+                        avatar_url: expect.any(String)
+                    }))
+                })
+            })
+        })
+    })
+
+    describe('GET: /api/articles (queries)', () => {
+        test('GET 200 - returs an array that is sorted by default by "created_at" and in DESC order with all articles', () => {
+            return request(app).get('/api/articles').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles.length).toBe(12)
+                expect(articles).toBeSortedBy('created_at', {descending: true})
+            })
+        })
+
+        test('GET 200 - returs an array that is sorted by "author" and by default in DESC order', () => {
+            return request(app).get('/api/articles/?sort_by=author').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles.length).toBe(12)
+                expect(articles).toBeSortedBy('author', {descending: true})
+            })
+        })
+
+        test('GET 200 - returs an array that is sorted by default by "created_at" and in ASC order', () => {
+            return request(app).get('/api/articles/?order=asc').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles.length).toBe(12)
+                expect(articles).toBeSortedBy('created_at', {descending: false})
+            })
+        })
+
+        test(`GET 200 - returs an array of the only objects where "topic" property is "mitch",
+            and is sorted by dcefault by "created_at" and in DESC order`, () => {
+            return request(app).get('/api/articles/?topic=mitch').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles.length).toBe(11)
+                expect(articles).toBeSortedBy('created_at', {descending: true})
+                articles.forEach(article => {
+                    expect(article).toHaveProperty('topic', 'mitch')
+                })
+            })
+        })
+
+        test(`GET 200 - returs an array of the only objects where "topic" property is "mitch", 
+            and that are sorted by "author" and in ASC order`, () => {
+            return request(app).get('/api/articles/?topic=mitch&sort_by=author&order=asc').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles.length).toBe(11)
+                expect(articles).toBeSortedBy('author', {descending: false})
+                articles.forEach(article => {
+                    expect(article).toHaveProperty('topic', 'mitch')
+                })
+            })
+        })
+
+        test(`GET 400 - returns a message 'Bad Request' when "sort_by" and "order" are listed but not specified`, () => {
+            return request(app).get('/api/articles/?sort_by&order').expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request')
+            })
+        })
+
+        test(`GET 404 - returns a message 'Not Found' when "sort_by" specified by not existed value`, () => {
+            return request(app).get('/api/articles/?sort_by=date').expect(404)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Not Found')
+            })
+        })
+
+        test(`GET 400 - returns a message 'Bad Request' when "order" is specified with an invalid input`, () => {
+            return request(app).get('/api/articles/?order=desk').expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request')
+            })
+        })
+
+
+        test(`GET 404 - returns a message 'Not Found' when "topic" specified by not existed value`, () => {
+            return request(app).get('/api/articles/?topic=dog').expect(404)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Not Found')
+            })
+        })
+    })
+
     describe('GET: /api/articles/:article_id  (added "comment count")', () => {
         test('GET: 200 - returns an object which contains a new added property "comment_count"', () => {
             return request(app).get('/api/articles/2').expect(200)

@@ -10,18 +10,36 @@ const fetchTopics = () => {
     })
 }
 
-const fetchArticles = () => {
-    const sqlString = 
+const fetchArticles = (topic, sort_by = 'created_at', order = 'DESC') => {
+    const queryValues = []
+    let sqlString = 
     `
         SELECT articles.*, COUNT(comments.comment_id) as comment_count
         FROM articles
         LEFT JOIN comments
         ON articles.article_id = comments.article_id
-        GROUP BY articles.article_id
-        ORDER BY created_at DESC;
     `
-    return db.query(sqlString)
-    .then(({rows}) => rows)
+    if (topic == undefined) {
+        sqlString += `
+        GROUP BY articles.article_id
+        ORDER BY ${sort_by} ${order};
+        `
+    } else {
+        sqlString += `
+            WHERE topic = $1
+            GROUP BY articles.article_id
+            ORDER BY ${sort_by} ${order};
+        `
+        queryValues.push(topic)
+    }
+    return db.query(sqlString, queryValues)
+    .then(({rowCount, rows}) => {
+        if (rowCount === 0) {
+            return Promise.reject({status: 404, message: 'Not Found'})
+        } else {
+            return rows
+        }
+    })
 }
 
 const fetchArticleById = (article_id) => {
@@ -154,13 +172,22 @@ const changeVotesOnArticle = (inc_votes, article_id) => {
     })
 }
 
+const fetchUsers = () => {
+    const sqlString = 
+    `
+        SELECT * FROM users;
+    `
+    return db.query(sqlString)
+    .then(({rows}) => rows)
+}
 
 
 module.exports = {
     fetchTopics,
     fetchArticles,
+    fetchUsers,
     fetchArticleById,
     fetchCommentsByArticleId,
     addNewComment,
-    changeVotesOnArticle
+    changeVotesOnArticle,
 }

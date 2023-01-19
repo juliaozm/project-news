@@ -2,6 +2,7 @@
 const {
     fetchTopics,
     fetchArticles,
+    fetchUsers,
     fetchArticleById,
     fetchCommentsByArticleId,
     addNewComment,
@@ -17,7 +18,8 @@ const getTopics = (request, response, next) => {
 }
 
 const getArticles = (request, response, next) => {
-    fetchArticles()
+    const {topic, sort_by, order} = request.query
+    fetchArticles(topic, sort_by, order)
     .then(articles => {
         response.status(200).send({articles})
     })
@@ -63,6 +65,14 @@ const updateArticle = (request, response, next) => {
     .catch(err => next(err))
 }
 
+const getUsers = (request, response, next) => {
+    fetchUsers()
+    .then(users => {
+        response.status(200).send({users})
+    })
+    .catch(err => next(err))
+}
+
 module.exports = {
     getTopics,
     getArticles,
@@ -70,4 +80,5 @@ module.exports = {
     getCommentsByArticleId,
     postCommentByArticleId,
     updateArticle,
+    getUsers
 }
