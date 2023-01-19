@@ -85,8 +85,7 @@ describe('news-project', () => {
         test('GET: 200 - a get request should return array of objects which is by default sorted by "created_at" in a DESC order', () => {
             return request(app).get('/api/articles').expect(200)
             .then(({body: {articles}}) => {
-                expect(articles[0]).toHaveProperty('created_at', '2020-11-03T09:12:00.000Z')
-                expect(articles[articles.length - 1]).toHaveProperty('created_at', '2020-01-07T14:08:00.000Z')
+                expect(articles).toBeSortedBy('created_at', {descending: true})
             })
         })
     })
