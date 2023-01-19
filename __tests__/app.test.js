@@ -536,4 +536,24 @@ describe('news-project', () => {
             })
         })
     })
+
+    describe('DELETE: /api/comments/:comment_id', () => {
+        test('DELETE: 204 - status 204 and no content if "comment_id" exists', () => {
+            return request(app).delete('/api/comments/1').expect(204)
+        })
+        
+        test('DELETE: 404 - returns a message "Not Found" if "comment_id" does not exist in the database', () => {
+            return request(app).delete('/api/comments/1000').expect(404)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Not Found')
+            })
+        })
+
+        test('DELETE: 400 - returns a message "Bad Request" if invalid "comment_id" was passed', () => {
+            return request(app).delete('/api/comments/notAnumber').expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request')
+            })
+        })
+    })
 })
