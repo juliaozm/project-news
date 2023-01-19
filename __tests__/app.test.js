@@ -85,8 +85,7 @@ describe('news-project', () => {
         test('GET: 200 - a get request should return array of objects which is by default sorted by "created_at" in a DESC order', () => {
             return request(app).get('/api/articles').expect(200)
             .then(({body: {articles}}) => {
-                expect(articles[0]).toHaveProperty('created_at', '2020-11-03T09:12:00.000Z')
-                expect(articles[articles.length - 1]).toHaveProperty('created_at', '2020-01-07T14:08:00.000Z')
+                expect(articles).toBeSortedBy('created_at', {descending: true})
             })
         })
     })
@@ -121,24 +120,34 @@ describe('news-project', () => {
             })
         })
 
-        test('GET: 200 - a get request should return array of objects which is by default sorted by "created_at" in a DESC order', () => {
+        test('GET: 200 - returns an array of objects which are by default sorted by "created_at" in a DESC order', () => {
             return request(app).get('/api/articles/1/comments').expect(200)
             .then(({body: {comments}}) => {
                 expect(comments).toBeSortedBy('created_at', { descending: true })
             })
         })
 
-        test('GET: 404 - a get request should return a message "Not Found" if the article_id does not exist', () => {
-            return request(app).get('/api/articles/2/comments').expect(404)
+        test('GET: 404 - returns a message if the article_id does not exist in the article database', () => {
+            return request(app).get('/api/articles/10000/comments').expect(404)
             .then(({body: {message}}) => {
-                expect(message).toBe('Not Found');
+                expect(message).toBe('This article does not exist');
             })
         })
 
-        test('GET: 400 - a get request should return a message "Bad Request" when bad article_id passed', () => {
+        test('GET: 400 - returns a message if a bad article_id is passed', () => {
             return request(app).get('/api/articles/notAnId/comments').expect(400)
             .then(({body: {message}}) => {
                expect(message).toBe('Bad Request');
+            })
+        })
+
+        test('GET: 200 - returns an object with an empty array of comments if the article exists in the database but has no comments', () => {
+            return request(app).get('/api/articles/2/comments').expect(200)
+            .then(({body: {comments}}) => {
+                expect(comments).toEqual([{
+                    message: 'No comments associated with this article',
+                    comments: []
+                }]);
             })
         })
     })
