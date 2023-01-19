@@ -119,6 +119,30 @@ const fetchUsers = () => {
     .then(({rows}) => rows)
 }
 
+const fetchArticlesByQueries = (topic, sort_by='created_at', order='DESC') => {
+    const queryValues = []
+    let sqlString = `SELECT * FROM articles`
+    if (topic == undefined) {
+        sqlString += `
+        ORDER BY ${sort_by} ${order};
+        `
+    } else {
+        sqlString += `
+            WHERE topic = $1 
+            ORDER BY ${sort_by} ${order};
+        `
+        queryValues.push(topic)
+    }
+    return db.query(sqlString, queryValues)
+    .then(({rows}) => {
+        if (rows.length === 0) {
+            return Promise.reject({status: 404, message: 'Not Found'})
+        } else {
+            return rows
+        }
+    })
+}
+
 
 module.exports = {
     fetchTopics,
@@ -126,5 +150,6 @@ module.exports = {
     fetchUsers,
     fetchCommentsByArticleId,
     addNewComment,
-    changeVotesOnArticle
+    changeVotesOnArticle,
+    fetchArticlesByQueries
 }

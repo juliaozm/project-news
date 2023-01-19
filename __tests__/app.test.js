@@ -403,4 +403,92 @@ describe('news-project', () => {
             })
         })
     })
+
+    describe.only('GET: /api/articles (queries)', () => {
+        test('GET 200 - returs an array that is sorted by default by "created_at" and in DESC order', () => {
+            return request(app).get('/api/articles').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles).toBeSortedBy('created_at', {descending: true})
+            })
+        })
+
+        test('GET 200 - returs an array that is sorted by "author" and by default in DESC order', () => {
+            return request(app).get('/api/articles/?sort_by=author').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles).toBeSortedBy('author', {descending: true})
+            })
+        })
+
+        test('GET 200 - returs an array that is sorted by default by "created_at" and in ASC order', () => {
+            return request(app).get('/api/articles/?order=asc').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles).toBeSortedBy('created_at', {descending: false})
+            })
+        })
+
+        test('GET 200 - returs an array that is sorted by "author" and in ASC order', () => {
+            return request(app).get('/api/articles/?sort_by=author&order=asc').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles).toBeSortedBy('author', {descending: false})
+            })
+        })
+
+        test(`GET 200 - returs an array of the only objects where "topic" property is "mitch",
+            and is sorted by dcefault by "created_at" and in DESC order`, () => {
+            return request(app).get('/api/articles/?topic=mitch').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles).toBeSortedBy('created_at', {descending: true})
+                articles.forEach(article => {
+                    expect(article).toHaveProperty('topic', 'mitch')
+                })
+            })
+        })
+
+        test(`GET 200 - returs an array of the only objects where "topic" property is "mitch", 
+            and that are sorted by "author" and in ASC order`, () => {
+            return request(app).get('/api/articles/?topic=mitch&sort_by=author&order=asc').expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles).toBeSortedBy('author', {descending: false})
+                articles.forEach(article => {
+                    expect(article).toHaveProperty('topic', 'mitch')
+                })
+            })
+        })
+
+        test(`GET 404 - returs `, () => {
+            return request(app).get('/api/articles/?topic=dog').expect(404)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Not Found')
+            })
+        })
+
+        test.only(`GET 404 - returs `, () => {
+            return request(app).get('/api/articles/?topic=').expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Not Found')
+            })
+        })
+
+        test(`GET 404 - returs `, () => {
+            return request(app).get('/api/articles/?sort_by=date').expect(404)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Not Found')
+            })
+        })
+
+        test(`GET 400 - returs `, () => {
+            return request(app).get('/api/articles/?sort_by').expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request')
+            })
+        })
+
+        test(`GET 400 - returs `, () => {
+            return request(app).get('/api/articles/?order=desk').expect(400)
+            .then(({body: {message}}) => {
+                expect(message).toBe('Bad Request')
+            })
+        })
+
+    })
 })

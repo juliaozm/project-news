@@ -6,6 +6,7 @@ const {
     fetchCommentsByArticleId,
     addNewComment,
     changeVotesOnArticle,
+    fetchArticlesByQueries
  } = require('../models/models.js')
 
 const getTopics = (request, response, next) => {
@@ -62,11 +63,23 @@ const getUsers = (request, response, next) => {
     .catch(err => next(err))
 }
 
+const getQueries = (request, response, next) => {
+    const {topic, sort_by, order} = request.query
+    console.log(topic)
+    fetchArticlesByQueries(topic, sort_by, order)
+    .then(articles => {
+        response.status(200).send({articles})
+    })
+    .catch(err =>{console.log(err)
+        next(err)} )
+}
+
 module.exports = {
     getTopics,
     getArticles,
     getCommentsByArticleId,
     postCommentByArticleId,
     updateArticle,
-    getUsers
+    getUsers,
+    getQueries
 }
