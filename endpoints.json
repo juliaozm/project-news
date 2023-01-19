@@ -1,27 +1,153 @@
 {
-  "GET /api": {
+  "GET: /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
-  "GET /api/topics": {
+
+  "GET: /api/topics": {
     "description": "serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
-    }
-  },
-  "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
-    "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+      "topics": [
+        { 
+          "slug": "football", 
+          "description": "Footie!" 
+        },
+        { 
+          "slug": "Cookies", 
+          "description": "Food?" 
         }
       ]
     }
+  },
+
+  "GET: /api/articles": {
+    "description": "serves an array of all articles",
+    "queries": ["topic", "sort_by", "order"],
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 5,
+          "title": "Living in the shadow of a great man",
+          "topic": "mitch",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "votes": 0,
+          "created_at": 1602828180000,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "comment_count": 2
+        },
+        {
+          "article_id": 1,
+          "title": "Eight pug gifs that remind me of mitch",
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "body": "Text from the article..",
+          "votes": 10,
+          "created_at": 1527695953341,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "comment_count": 12
+        }
+      ]
+    }
+  },
+
+  "GET: /api/articles/:article_id": {
+    "description": "serves an article object",
+    "params": ["article_id"],
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "author": "weegembump",
+        "body": "Text from the article..",
+        "created_at": 1527695953341,
+        "votes": 0,
+        "comment_count": 0,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      }
+    }
+  },
+
+  "GET: /api/articles/:article_id/comments": {
+    "description": "serves an array of comments for the given article",
+    "params": ["article_id"],
+    "exampleResponse": {
+      "comments" : [
+        {
+          "created_at": 1602828180000,
+          "comment_id": 5,
+          "article_id": 1,
+          "votes": 0,
+          "author": "weegembump",
+          "body": "I hate streaming noses"
+        },
+        {
+          "created_at": 1594329060000,
+          "comment_id": 1,
+          "article_id": 1,
+          "votes": 10,
+          "author": "weegembump",
+          "body": "Text from the article.."
+        }
+      ]
+    }
+  },
+
+  "POST: /api/articles/:article_id/comments": {
+    "description": "serves the posted comment object",
+    "params": ["article_id"],
+    "exampleResponse": {
+      "comment" : {
+        "created_at": 1674161651000,
+        "comment_id": 19,
+        "article_id": 1,
+        "votes": 0,
+        "author": "weegembump",
+        "body": "Great comment!"
+      }
+    }
+  },
+
+  "PATCH: /api/articles/:article_id/comments": {
+    "description": "serves the updated article object",
+    "params": ["article_id"],
+    "exampleResponse": {
+      "article" : {
+        "article_id": 3,
+        "title": "Eight pug gifs that remind me of mitch",
+        "topic": "mitch",
+        "author": "weegembump",
+        "body": "some gifs",
+        "created_at": 1674161651000,
+        "votes": 100,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      }
+    }
+  },
+
+  "GET: /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        { 
+          "username": "footplayer", 
+          "name": "Jack",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'"
+        },
+        { 
+          "username": "icellusedkars", 
+          "name": "Sam",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/07/Lime4.jpg'"
+        }
+      ]
+    }
+  },
+
+  "DELETE: /api/comments/:comment_id": {
+    "description": "deletes the given comment and responses with no content",
+    "params": ["comment_id"],
+    "exampleResponse": {}
   }
 }

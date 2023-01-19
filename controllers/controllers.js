@@ -7,7 +7,8 @@ const {
     fetchCommentsByArticleId,
     addNewComment,
     changeVotesOnArticle,
-    deleteComment
+    deleteComment,
+    fetchEndpoints
  } = require('../models/models.js')
 
 const getTopics = (request, response, next) => {
@@ -83,6 +84,14 @@ const deleteCommentById = (request, response, next) => {
     .catch(err => next(err))
 }
 
+const getAllEndpoints = (request, response, next) => {
+    fetchEndpoints()
+    .then((endpointsList) => {
+        response.status(200).send({endpointsList})
+    })
+    .catch(err => next(err))
+}
+
 module.exports = {
     getTopics,
     getArticles,
@@ -91,5 +100,6 @@ module.exports = {
     postCommentByArticleId,
     updateArticle,
     getUsers,
-    deleteCommentById
+    deleteCommentById,
+    getAllEndpoints
 }
