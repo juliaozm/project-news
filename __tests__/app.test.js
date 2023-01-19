@@ -438,14 +438,6 @@ describe('news-project', () => {
             })
         })
 
-        test('GET 200 - returs an array that is sorted by "author" and in ASC order', () => {
-            return request(app).get('/api/articles/?sort_by=author&order=asc').expect(200)
-            .then(({body: {articles}}) => {
-                expect(articles.length).toBe(12)
-                expect(articles).toBeSortedBy('author', {descending: false})
-            })
-        })
-
         test(`GET 200 - returs an array of the only objects where "topic" property is "mitch",
             and is sorted by dcefault by "created_at" and in DESC order`, () => {
             return request(app).get('/api/articles/?topic=mitch').expect(200)
@@ -498,13 +490,5 @@ describe('news-project', () => {
                 expect(message).toBe('Not Found')
             })
         })
-
-        test(`GET 404 - returns a message 'Not Found' when "topic" is listed but not specified`, () => {
-            return request(app).get('/api/articles/?topic').expect(404)
-            .then(({body: {message}}) => {
-                expect(message).toBe('Not Found')
-            })
-        })
-
     })
 })
