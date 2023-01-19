@@ -4,6 +4,7 @@ const seed = require('../db/seeds/seed.js')
 const testData = require('../db/data/test-data/index.js')
 const db = require('../db/connection.js')
 
+
 beforeEach(() => {
     return seed(testData)
 })
@@ -90,6 +91,50 @@ describe('news-project', () => {
         })
     })
 
+    describe('GET: /api/articles/:article_id', () => {
+        test('GET: 200 - a get request should response with status 200', () => {
+            return request(app).get('/api/articles/2').expect(200);
+        })
+
+        test('GET: 200 - a get request should return an article object', () => {
+            return request(app).get('/api/articles/2').expect(200)
+            .then(({body: {article}}) => {
+                expect(article).toBeInstanceOf(Object);
+            })
+        })
+
+        test('GET: 200 - a get request should return an object with following properties', () => {
+            return request(app).get('/api/articles/5').expect(200)
+            .then(({body: {article}}) => {
+                expect(article).toEqual(expect.objectContaining({
+                    author : expect.any(String),
+                    title : expect.any(String),
+                    article_id : expect.any(Number),
+                    body : expect.any(String),
+                    topic : expect.any(String),
+                    created_at : expect.any(String),
+                    votes : expect.any(Number),
+                    article_img_url : expect.any(String)
+                }))
+               
+            })
+        })
+
+        test('GET: 404 - returns a message "Not Found" when "article_id" does not exist', () => {
+            return request(app).get('/api/articles/100').expect(404)
+            .then(({body : {message}}) => {
+                expect(message).toEqual('Not Found')
+            })
+        })
+
+        test('GET: 400 - returns a message "Bad Request" when a bad "article_id" is passed', () => {
+            return request(app).get('/api/articles/notAnumber').expect(400)
+            .then(({body : {message}}) => {
+                expect(message).toEqual('Bad Request')
+            })
+        })
+    })
+
     describe('GET: /api/articles/:article_id/comments', () => {
         test('GET: 200 - a get request should response with status 200', () => {
             return request(app).get('/api/articles/1/comments').expect(200)
@@ -120,7 +165,7 @@ describe('news-project', () => {
             })
         })
 
-        test('GET: 200 - returns an array of objects which are by default sorted by "created_at" in a DESC order', () => {
+        test('GET: 200 - a get request should return array of objects which is by default sorted by "created_at" in a DESC order', () => {
             return request(app).get('/api/articles/1/comments').expect(200)
             .then(({body: {comments}}) => {
                 expect(comments).toBeSortedBy('created_at', { descending: true })
