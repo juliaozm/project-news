@@ -8,11 +8,13 @@ const {
     getCommentsByArticleId,
     postCommentByArticleId,
     updateArticle,
-    deleteCommentById
+    deleteCommentById,
+    getAllEndpoints
 } = require('./controllers/controllers.js')
 
 app.use(express.json())
 
+app.get('/api', getAllEndpoints)
 app.get('/api/topics', getTopics)
 app.get('/api/articles', getArticles)
 app.get('/api/articles/:article_id', getArticleById)

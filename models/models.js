@@ -1,4 +1,5 @@
 const db = require('../db/connection.js')
+const fs = require('fs/promises')
 
 const fetchTopics = () => {
     const sqlString = 
@@ -193,6 +194,14 @@ const deleteComment = (comment_id) => {
     })
 }
 
+const fetchEndpoints = () => {
+    const file = `./endpoints.json`
+    return fs.readFile(file, 'utf-8')
+    .then(stringifiedData => {
+        return JSON.parse(stringifiedData)
+    })
+}
+
 module.exports = {
     fetchTopics,
     fetchArticles,
@@ -201,5 +210,6 @@ module.exports = {
     fetchCommentsByArticleId,
     addNewComment,
     changeVotesOnArticle,
-    deleteComment
+    deleteComment,
+    fetchEndpoints
 }
