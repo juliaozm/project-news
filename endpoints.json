@@ -8,13 +8,13 @@
     "queries": [],
     "exampleResponse": {
       "topics": [
-        { 
-          "slug": "football", 
-          "description": "Footie!" 
+        {
+          "slug": "football",
+          "description": "Footie!"
         },
-        { 
-          "slug": "Cookies", 
-          "description": "Food?" 
+        {
+          "slug": "Cookies",
+          "description": "Food?"
         }
       ]
     }
@@ -22,8 +22,9 @@
 
   "GET: /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["topic", "sort_by", "order"],
+    "queries": ["topic", "sort_by", "order", "page", "limit"],
     "exampleResponse": {
+      "total_count": 10,
       "articles": [
         {
           "article_id": 5,
@@ -37,7 +38,7 @@
           "comment_count": 2
         },
         {
-          "article_id": 1,
+          "article_id": 2,
           "title": "Eight pug gifs that remind me of mitch",
           "topic": "mitch",
           "author": "icellusedkars",
@@ -73,7 +74,7 @@
     "description": "serves an array of comments for the given article",
     "params": ["article_id"],
     "exampleResponse": {
-      "comments" : [
+      "comments": [
         {
           "created_at": 1602828180000,
           "comment_id": 5,
@@ -98,11 +99,11 @@
     "description": "serves the posted comment object",
     "params": ["article_id"],
     "request body": {
-      "username": "existedUsername", 
+      "username": "existedUsername",
       "body": "anyText"
     },
     "exampleResponse": {
-      "comment" : {
+      "comment": {
         "created_at": 1674161651000,
         "comment_id": 19,
         "article_id": 1,
@@ -120,7 +121,7 @@
       "inc_votes": "newVote"
     },
     "exampleResponse": {
-      "article" : {
+      "article": {
         "article_id": 3,
         "title": "Eight pug gifs that remind me of mitch",
         "topic": "mitch",
@@ -138,13 +139,13 @@
     "queries": [],
     "exampleResponse": {
       "users": [
-        { 
-          "username": "footplayer", 
+        {
+          "username": "footplayer",
           "name": "Jack",
           "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'"
         },
-        { 
-          "username": "icellusedkars", 
+        {
+          "username": "icellusedkars",
           "name": "Sam",
           "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/07/Lime4.jpg'"
         }
