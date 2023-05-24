@@ -736,6 +736,34 @@ describe("news-project", () => {
         });
     });
 
+    test("GET: 200 - returns all filtered articles when default limit is higher than total_count", () => {
+      return request(app)
+        .get("/api/articles/?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          body.articles.forEach((article) => {
+            expect(article).toHaveProperty("topic", "cats");
+          });
+          expect(body.articles.length).toBeLessThanOrEqual(10);
+          expect(body.total_count).toBe(3);
+        });
+    });
+
+    test("GET: 200 - returns all filtered articles when total_count is less than limit but limit is less than 50", () => {
+      const limit = 20;
+      return request(app)
+        .get("/api/articles/?topic=mitch")
+        .query({ limit })
+        .expect(200)
+        .then(({ body }) => {
+          body.articles.forEach((article) => {
+            expect(article).toHaveProperty("topic", "mitch");
+          });
+          expect(body.articles.length).toBeLessThanOrEqual(limit);
+          expect(body.total_count).toBe(11);
+        });
+    });
+
     test("GET: 400 - returns error message when a limit query is not a number", () => {
       const limit = "abc";
       return request(app)
@@ -791,10 +819,21 @@ describe("news-project", () => {
         });
     });
 
-    test("GET: 404 - returns error message when the limit exceeds a total_count ", () => {
+    test("GET: 404 - returns error message when the limit exceeds a total_count and is more than 50", () => {
       const limit = 10000;
       return request(app)
         .get("/api/articles")
+        .query({ limit })
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Limit exceeds the total number of articles");
+        });
+    });
+
+    test("GET: 404 - returns error message when the limit is more than 50 and a total_count is less than limit", () => {
+      const limit = 51;
+      return request(app)
+        .get("/api/articles?title=cats")
         .query({ limit })
         .expect(404)
         .then(({ body: { message } }) => {
