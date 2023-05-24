@@ -11,11 +11,19 @@ const fetchTopics = () => {
   });
 };
 
-const fetchTotalArticlesNumber = () => {
-  const sqlString = `
-          SELECT COUNT(*) FROM articles;
-      `;
-  return db.query(sqlString).then(({ rows, rowCount }) => {
+const fetchTotalArticlesNumber = (topic) => {
+  const queryValues = [];
+  let sqlString = `
+    SELECT COUNT(*) FROM articles
+  `;
+
+  if (topic !== undefined) {
+    sqlString += `
+      WHERE topic = $1
+    `;
+    queryValues.push(topic);
+  }
+  return db.query(sqlString, queryValues).then(({ rows, rowCount }) => {
     if (rowCount === 0) {
       return Promise.reject({ status: 404, message: "Not Found" });
     } else {
@@ -35,9 +43,9 @@ const fetchArticles = async (
 
   await isPositiveInteger(limit, page);
 
-  const total_count = await fetchTotalArticlesNumber();
+  const total_count = await fetchTotalArticlesNumber(topic);
 
-  if (limit > total_count) {
+  if (total_count && limit > 50) {
     return Promise.reject({
       status: 404,
       message: "Limit exceeds the total number of articles",
