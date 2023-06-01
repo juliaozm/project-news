@@ -2,6 +2,7 @@ const {
   fetchTopics,
   fetchArticles,
   fetchUsers,
+  fetchUserByUsername,
   fetchArticleById,
   fetchCommentsByArticleId,
   addNewComment,
@@ -77,6 +78,15 @@ const getUsers = (request, response, next) => {
     .catch((err) => next(err));
 };
 
+const getUserByUsername = (request, response, next) => {
+  const { username } = request.params;
+  fetchUserByUsername(username)
+    .then((user) => {
+      response.status(200).send({ user });
+    })
+    .catch((err) => next(err));
+};
+
 const deleteCommentById = (request, response, next) => {
   const { comment_id } = request.params;
   deleteComment(comment_id)
@@ -102,6 +112,7 @@ module.exports = {
   postCommentByArticleId,
   updateArticle,
   getUsers,
+  getUserByUsername,
   deleteCommentById,
   getAllEndpoints,
 };

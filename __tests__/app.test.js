@@ -537,6 +537,60 @@ describe("news-project", () => {
     });
   });
 
+  describe("GET: /api/users/:username", () => {
+    test("GET: 200 - a get request should return a user object with following properties", () => {
+      return request(app)
+        .get("/api/users/lurker")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test('GET: 404 - returns a message "Username Not Found" when "username" does not exist', () => {
+      return request(app)
+        .get("/api/users/anonymous")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toEqual("Username Not Found");
+        });
+    });
+
+    test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
+      return request(app)
+        .get("/api/users/123wef")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toEqual("Bad Request");
+        });
+    });
+
+    test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
+      return request(app)
+        .get("/api/users/_wef")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toEqual("Bad Request");
+        });
+    });
+
+    test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
+      return request(app)
+        .get("/api/users/BettY")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toEqual("Bad Request");
+        });
+    });
+  });
+
   describe("GET: /api/articles (queries)", () => {
     test('GET 200 - returs an array that is sorted by default by "created_at" and in DESC order with all articles', () => {
       return request(app)
