@@ -235,6 +235,24 @@ const fetchUsers = () => {
   return db.query(sqlString).then(({ rows }) => rows);
 };
 
+const fetchUserByUsername = (username) => {
+  const pattern = /^(?![_0-9])([a-z0-9_]{6,20})$/;
+  if (!pattern.test(username)) {
+    return Promise.reject({ status: 400, message: "Bad Request" });
+  }
+  const sqlString = `
+    SELECT * FROM users
+    WHERE username = $1;
+  `;
+  return db.query(sqlString, [username]).then(({ rows, rowCount }) => {
+    if (rowCount === 0) {
+      return Promise.reject({ status: 404, message: "Username Not Found" });
+    } else {
+      return rows[0];
+    }
+  });
+};
+
 const deleteComment = (comment_id) => {
   const sqlString = `
         DELETE FROM comments
@@ -257,6 +275,7 @@ module.exports = {
   fetchTopics,
   fetchArticles,
   fetchUsers,
+  fetchUserByUsername,
   fetchArticleById,
   fetchCommentsByArticleId,
   addNewComment,
