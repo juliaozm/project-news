@@ -149,22 +149,21 @@ const fetchCommentsByArticleId = (article_id) => {
 const addNewComment = (article_id, newCommentData) => {
   if (
     Object.keys(newCommentData).length <= 1 ||
-    !newCommentData.username ||
+    !newCommentData.email ||
     !newCommentData.body
   ) {
     return Promise.reject({ status: 400, message: "Bad Request" });
   }
 
-  const { username, body, votes = 0 } = newCommentData;
+  const { email, body, votes = 0 } = newCommentData;
 
   // checking if the username exists in the users database
   const userString = `
         SELECT * FROM users
-        WHERE username = $1;
-    
+        WHERE email = $1;
     `;
   return db
-    .query(userString, [username])
+    .query(userString, [email])
     .then(({ rowCount, rows }) => {
       if (rowCount === 0) {
         // user doesn't exist
@@ -182,15 +181,16 @@ const addNewComment = (article_id, newCommentData) => {
       const created_at = new Date();
       const commentString = `
             INSERT INTO comments
-                (article_id, author, body, votes, created_at)
+                (article_id, author, email, body, votes, created_at)
             VALUES
-                ($1, $2, $3, $4, $5)
+                ($1, $2, $3, $4, $5, $6)
             RETURNING *;
         `;
       return db
         .query(commentString, [
           article_id,
           user.username,
+          user.email,
           body,
           votes,
           created_at,
@@ -253,6 +253,25 @@ const fetchUserByUsername = (username) => {
   });
 };
 
+const fetchUserByEmail = (email) => {
+  const pattern =
+    /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+([.-]?[a-zA-Z0-9]+)*(\.[a-zA-Z]{2,})+$/;
+  if (!pattern.test(email.trim())) {
+    return Promise.reject({ status: 400, message: "Not valid email" });
+  }
+  const sqlString = `
+    SELECT * FROM users
+    WHERE email = $1;
+  `;
+  return db.query(sqlString, [email.trim()]).then(({ rows, rowCount }) => {
+    if (rowCount === 0) {
+      return Promise.reject({ status: 404, message: "User Not Found" });
+    } else {
+      return rows[0];
+    }
+  });
+};
+
 const deleteComment = (comment_id) => {
   const sqlString = `
         DELETE FROM comments
@@ -276,6 +295,7 @@ module.exports = {
   fetchArticles,
   fetchUsers,
   fetchUserByUsername,
+  fetchUserByEmail,
   fetchArticleById,
   fetchCommentsByArticleId,
   addNewComment,

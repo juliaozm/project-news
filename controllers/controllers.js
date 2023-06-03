@@ -3,6 +3,7 @@ const {
   fetchArticles,
   fetchUsers,
   fetchUserByUsername,
+  fetchUserByEmail,
   fetchArticleById,
   fetchCommentsByArticleId,
   addNewComment,
@@ -87,6 +88,15 @@ const getUserByUsername = (request, response, next) => {
     .catch((err) => next(err));
 };
 
+const getUserByEmail = (request, response, next) => {
+  const { email } = request.params;
+  fetchUserByEmail(email)
+    .then((user) => {
+      response.status(200).send({ user });
+    })
+    .catch((err) => next(err));
+};
+
 const deleteCommentById = (request, response, next) => {
   const { comment_id } = request.params;
   deleteComment(comment_id)
@@ -113,6 +123,7 @@ module.exports = {
   updateArticle,
   getUsers,
   getUserByUsername,
+  getUserByEmail,
   deleteCommentById,
   getAllEndpoints,
 };
