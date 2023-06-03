@@ -6,6 +6,7 @@ const {
   getArticles,
   getUsers,
   getUserByUsername,
+  getUserByEmail,
   getArticleById,
   getCommentsByArticleId,
   postCommentByArticleId,
@@ -25,7 +26,7 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 app.patch("/api/articles/:article_id", updateArticle);
 app.get("/api/users", getUsers);
-app.get("/api/users/:username", getUserByUsername);
+app.get("/api/users/:email", getUserByEmail);
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.use((err, request, response, next) => {
