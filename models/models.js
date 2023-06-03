@@ -1,6 +1,10 @@
 const db = require("../db/connection.js");
 const fs = require("fs/promises");
-const { isPositiveInteger } = require("./validations.js");
+const {
+  isPositiveInteger,
+  isEmailValid,
+  isUsernameValid,
+} = require("./validations.js");
 
 const fetchTopics = () => {
   const sqlString = `
@@ -235,41 +239,72 @@ const fetchUsers = () => {
   return db.query(sqlString).then(({ rows }) => rows);
 };
 
-const fetchUserByUsername = (username) => {
-  const pattern = /^(?![_0-9])([a-z0-9_]{6,20})$/;
-  if (!pattern.test(username)) {
-    return Promise.reject({ status: 400, message: "Bad Request" });
+const addNewUser = async (newUser) => {
+  const { email, username } = newUser;
+
+  if (Object.keys(newUser).length < 2 || !newUser.email || !newUser.username) {
+    return Promise.reject({ status: 400, message: "Invalid user data" });
   }
-  const sqlString = `
+
+  await isEmailValid(email);
+  await isUsernameValid(username);
+
+  const emailStr = `
+    SELECT * FROM users
+    WHERE email = $1;
+  `;
+
+  const usernameStr = `
     SELECT * FROM users
     WHERE username = $1;
   `;
-  return db.query(sqlString, [username]).then(({ rows, rowCount }) => {
-    if (rowCount === 0) {
-      return Promise.reject({ status: 404, message: "Username Not Found" });
-    } else {
+
+  const [emailResp, usernameResp] = await Promise.all([
+    db.query(emailStr, [email]),
+    db.query(usernameStr, [username]),
+  ]);
+
+  if (emailResp.rowCount === 1 && usernameResp.rowCount === 1) {
+    return Promise.reject({
+      status: 409,
+      message: "This user already exists",
+    });
+  } else if (emailResp.rowCount === 1) {
+    return Promise.reject({
+      status: 409,
+      message: "This email already exists",
+    });
+  } else if (usernameResp.rowCount === 1) {
+    return Promise.reject({
+      status: 409,
+      message: "This username already exists",
+    });
+  } else if (emailResp.rowCount === 0 && usernameResp.rowCount === 0) {
+    const newUserString = `
+        INSERT INTO users
+            (email, username)
+        VALUES
+            ($1, $2)
+        RETURNING *;
+      `;
+    return db.query(newUserString, [email, username]).then(({ rows }) => {
       return rows[0];
-    }
-  });
+    });
+  }
 };
 
-const fetchUserByEmail = (email) => {
-  const pattern =
-    /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+([.-]?[a-zA-Z0-9]+)*(\.[a-zA-Z]{2,})+$/;
-  if (!pattern.test(email.trim())) {
-    return Promise.reject({ status: 400, message: "Not valid email" });
-  }
+const fetchUserByEmail = async (email) => {
+  await isEmailValid(email);
   const sqlString = `
     SELECT * FROM users
     WHERE email = $1;
   `;
-  return db.query(sqlString, [email.trim()]).then(({ rows, rowCount }) => {
-    if (rowCount === 0) {
-      return Promise.reject({ status: 404, message: "User Not Found" });
-    } else {
-      return rows[0];
-    }
-  });
+  const { rows, rowCount } = await db.query(sqlString, [email.trim()]);
+  if (rowCount === 0) {
+    return Promise.reject({ status: 404, message: "User Not Found" });
+  } else {
+    return rows[0];
+  }
 };
 
 const deleteComment = (comment_id) => {
@@ -283,22 +318,21 @@ const deleteComment = (comment_id) => {
   });
 };
 
-const fetchEndpoints = () => {
+const fetchEndpoints = async () => {
   const file = `./endpoints.json`;
-  return fs.readFile(file, "utf-8").then((stringifiedData) => {
-    return JSON.parse(stringifiedData);
-  });
+  const stringifiedData = await fs.readFile(file, "utf-8");
+  return JSON.parse(stringifiedData);
 };
 
 module.exports = {
   fetchTopics,
   fetchArticles,
   fetchUsers,
-  fetchUserByUsername,
   fetchUserByEmail,
   fetchArticleById,
   fetchCommentsByArticleId,
   addNewComment,
+  addNewUser,
   changeVotesOnArticle,
   deleteComment,
   fetchEndpoints,
