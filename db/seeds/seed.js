@@ -1,10 +1,10 @@
-const format = require('pg-format');
-const db = require('../connection');
+const format = require("pg-format");
+const db = require("../connection");
 const {
   convertTimestampToDate,
   createRef,
   formatComments,
-} = require('./utils');
+} = require("./utils");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
@@ -27,9 +27,9 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
 
       const usersTablePromise = db.query(`
       CREATE TABLE users (
-        username VARCHAR PRIMARY KEY,
-        name VARCHAR NOT NULL,
-        avatar_url VARCHAR
+        email VARCHAR PRIMARY KEY,
+        username VARCHAR NOT NULL,
+        avatar_url VARCHAR DEFAULT 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
       );`);
 
       return Promise.all([topicsTablePromise, usersTablePromise]);
@@ -40,7 +40,8 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         article_id SERIAL PRIMARY KEY,
         title VARCHAR NOT NULL,
         topic VARCHAR NOT NULL REFERENCES topics(slug),
-        author VARCHAR NOT NULL REFERENCES users(username),
+        email VARCHAR NOT NULL REFERENCES users(email),
+        author VARCHAR NOT NULL,
         body VARCHAR NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
         votes INT DEFAULT 0 NOT NULL,
@@ -53,23 +54,24 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         comment_id SERIAL PRIMARY KEY,
         body VARCHAR NOT NULL,
         article_id INT REFERENCES articles(article_id) NOT NULL,
-        author VARCHAR REFERENCES users(username) NOT NULL,
+        email VARCHAR NOT NULL REFERENCES users(email),
+        author VARCHAR NOT NULL,
         votes INT DEFAULT 0 NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
       );`);
     })
     .then(() => {
       const insertTopicsQueryStr = format(
-        'INSERT INTO topics (slug, description) VALUES %L;',
+        "INSERT INTO topics (slug, description) VALUES %L;",
         topicData.map(({ slug, description }) => [slug, description])
       );
       const topicsPromise = db.query(insertTopicsQueryStr);
 
       const insertUsersQueryStr = format(
-        'INSERT INTO users ( username, name, avatar_url) VALUES %L;',
-        userData.map(({ username, name, avatar_url }) => [
+        "INSERT INTO users ( email, username, avatar_url) VALUES %L;",
+        userData.map(({ email, username, avatar_url }) => [
+          email,
           username,
-          name,
           avatar_url,
         ])
       );
@@ -80,31 +82,42 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     .then(() => {
       const formattedArticleData = articleData.map(convertTimestampToDate);
       const insertArticlesQueryStr = format(
-        'INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;',
+        "INSERT INTO articles (title, topic, email, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;",
         formattedArticleData.map(
           ({
             title,
             topic,
+            email,
             author,
             body,
             created_at,
             votes = 0,
             article_img_url,
-          }) => [title, topic, author, body, created_at, votes, article_img_url]
+          }) => [
+            title,
+            topic,
+            email,
+            author,
+            body,
+            created_at,
+            votes,
+            article_img_url,
+          ]
         )
       );
 
       return db.query(insertArticlesQueryStr);
     })
     .then(({ rows: articleRows }) => {
-      const articleIdLookup = createRef(articleRows, 'title', 'article_id');
+      const articleIdLookup = createRef(articleRows, "title", "article_id");
       const formattedCommentData = formatComments(commentData, articleIdLookup);
 
       const insertCommentsQueryStr = format(
-        'INSERT INTO comments (body, author, article_id, votes, created_at) VALUES %L;',
+        "INSERT INTO comments (body, email, author, article_id, votes, created_at) VALUES %L;",
         formattedCommentData.map(
-          ({ body, author, article_id, votes = 0, created_at }) => [
+          ({ body, email, author, article_id, votes = 0, created_at }) => [
             body,
+            email,
             author,
             article_id,
             votes,
