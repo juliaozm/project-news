@@ -238,7 +238,7 @@ describe("news-project", () => {
   describe("POST: /api/articles/:article_id/comments", () => {
     test('POST: 201 - responses with a comment object if "username" exists in users database and "body" is valid', () => {
       const newComment = {
-        username: "icellusedkars",
+        email: "icellusedkars@examp-le.com",
         body: "Great comment!",
       };
       return request(app)
@@ -252,7 +252,7 @@ describe("news-project", () => {
 
     test("POST: 201 - responses with a comment object that cointains the following properties when passed a valid request body", () => {
       const newComment = {
-        username: "icellusedkars",
+        email: "icellusedkars@examp-le.com",
         body: "Great comment!",
       };
       return request(app)
@@ -264,6 +264,7 @@ describe("news-project", () => {
             expect.objectContaining({
               article_id: expect.any(Number),
               author: expect.any(String),
+              email: expect.any(String),
               body: expect.any(String),
               votes: expect.any(Number),
               created_at: expect.any(Number),
@@ -274,7 +275,7 @@ describe("news-project", () => {
 
     test("POST: 201 - responses with a comment object that ignores any additional keys passed in a request body", () => {
       const newComment = {
-        username: "icellusedkars",
+        email: "icellusedkars@examp-le.com",
         body: "Great comment!",
         greetings: "Hello!",
         age: 32,
@@ -289,6 +290,7 @@ describe("news-project", () => {
             expect.objectContaining({
               article_id: expect.any(Number),
               author: expect.any(String),
+              email: expect.any(String),
               body: expect.any(String),
               votes: expect.any(Number),
               created_at: expect.any(Number),
@@ -299,7 +301,7 @@ describe("news-project", () => {
 
     test('POST: 404 - returns a message "This user does not exist" when there is no such "username" in users database', () => {
       const newComment = {
-        username: "ololo",
+        email: "ololo@gmail.com",
         body: "Great comment!",
       };
       return request(app)
@@ -324,7 +326,7 @@ describe("news-project", () => {
 
     test('POST: 400 - returns a message "Bad request" when a request body missing a required "body" property', () => {
       const newComment = {
-        username: "icellusedkars",
+        email: "butter_bridge@gmail.com",
       };
       return request(app)
         .post("/api/articles/1/comments")
@@ -350,7 +352,7 @@ describe("news-project", () => {
 
     test('POST: 400 - returns a message "Bad request" when a request body has empty values', () => {
       const newComment = {
-        username: "",
+        email: "",
         body: "",
       };
       return request(app)
@@ -364,7 +366,7 @@ describe("news-project", () => {
 
     test('POST: 400 - returns a message "Bad request" when invalid article_id is passed', () => {
       const newComment = {
-        username: "icellusedkars",
+        email: "butter_bridge@gmail.com",
         body: "Great comment!",
       };
       return request(app)
@@ -528,7 +530,7 @@ describe("news-project", () => {
             expect(user).toEqual(
               expect.objectContaining({
                 username: expect.any(String),
-                name: expect.any(String),
+                email: expect.any(String),
                 avatar_url: expect.any(String),
               })
             );
@@ -537,59 +539,205 @@ describe("news-project", () => {
     });
   });
 
-  describe("GET: /api/users/:username", () => {
+  describe("GET: /api/users/:email", () => {
     test("GET: 200 - a get request should return a user object with following properties", () => {
+      const email = "butter_bridge@gmail.com";
       return request(app)
-        .get("/api/users/lurker")
+        .get(`/api/users/${email}`)
         .expect(200)
         .then(({ body: { user } }) => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
               username: expect.any(String),
-              name: expect.any(String),
+              email: expect.any(String),
               avatar_url: expect.any(String),
             })
           );
         });
     });
 
-    test('GET: 404 - returns a message "Username Not Found" when "username" does not exist', () => {
+    test("GET: 200 - a get request should return a user object if the validator trims leading and trailing whitespaces", () => {
       return request(app)
-        .get("/api/users/anonymous")
+        .get("/api/users/ butter_bridge@gmail.com ")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              email: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("GET: 200 - returns a user object a message if special characters, such as hyphens, underscores, or dots are in the email address", () => {
+      return request(app)
+        .get("/api/users/an.ony-mo_us@gmail.com")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              email: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+    test("GET: 200 - returns a user object a message if underscore and dots are in domain of the email address", () => {
+      return request(app)
+        .get("/api/users/icellusedkars@examp-le.com")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              email: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("GET: 200 - returns a user object a message with subdomain in the email address", () => {
+      return request(app)
+        .get("/api/users/example@subdomain.example.com")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              email: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test('GET: 404 - returns a message "User Not Found" when email address does not exist', () => {
+      return request(app)
+        .get("/api/users/ano_nymo-us.11@gmai-l.com")
         .expect(404)
         .then(({ body: { message } }) => {
-          expect(message).toEqual("Username Not Found");
+          expect(message).toEqual("User Not Found");
         });
     });
 
-    test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
+    test('GET: 400 - returns a message "Not valid email" without Top-Level Domain', () => {
       return request(app)
-        .get("/api/users/123wef")
+        .get("/api/users/example@example")
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toEqual("Bad Request");
+          expect(message).toEqual("Not valid email");
         });
     });
 
-    test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
+    test('GET: 400 - returns a message "Not valid email" without "@" symbol', () => {
       return request(app)
-        .get("/api/users/_wef")
+        .get("/api/users/exampleexample.com")
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toEqual("Bad Request");
+          expect(message).toEqual("Not valid email");
         });
     });
 
-    test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
+    test('GET: 400 - returns a message "Not valid email" if the local part (before the "@") is missing', () => {
       return request(app)
-        .get("/api/users/BettY")
+        .get("/api/users/@example.com")
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toEqual("Bad Request");
+          expect(message).toEqual("Not valid email");
+        });
+    });
+
+    test('GET: 400 - returns a message "Not valid email" if a domain part (after the "@")  is missing', () => {
+      return request(app)
+        .get("/api/users/example@")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toEqual("Not valid email");
+        });
+    });
+
+    test('GET: 400 - returns a message "Not valid email" with multiple "@" symbols in the email address', () => {
+      return request(app)
+        .get("/api/users/example@example@example.com")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toEqual("Not valid email");
+        });
+    });
+
+    test('GET: 400 - returns a message "Not valid email" with underscore character in the domain part', () => {
+      return request(app)
+        .get("/api/users/example@exa_mple.com")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toEqual("Not valid email");
         });
     });
   });
+
+  // describe("GET: /api/users/:username", () => {
+  //   test("GET: 200 - a get request should return a user object with following properties", () => {
+  //     const username = "lurker"
+  //     return request(app)
+  //       .get(`/api/users/${username}`)
+  //       .expect(200)
+  //       .then(({ body: { user } }) => {
+  //         expect(user).toBeInstanceOf(Object);
+  //         expect(user).toEqual(
+  //           expect.objectContaining({
+  //             username: expect.any(String),
+  //             email: expect.any(String),
+  //             avatar_url: expect.any(String),
+  //           })
+  //         );
+  //       });
+  //   });
+
+  //   test('GET: 404 - returns a message "Username Not Found" when "username" does not exist', () => {
+  //     return request(app)
+  //       .get("/api/users/anonymous")
+  //       .expect(404)
+  //       .then(({ body: { message } }) => {
+  //         expect(message).toEqual("Username Not Found");
+  //       });
+  //   });
+
+  //   test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
+  //     return request(app)
+  //       .get("/api/users/123wef")
+  //       .expect(400)
+  //       .then(({ body: { message } }) => {
+  //         expect(message).toEqual("Bad Request");
+  //       });
+  //   });
+
+  //   test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
+  //     return request(app)
+  //       .get("/api/users/_wef")
+  //       .expect(400)
+  //       .then(({ body: { message } }) => {
+  //         expect(message).toEqual("Bad Request");
+  //       });
+  //   });
+
+  //   test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
+  //     return request(app)
+  //       .get("/api/users/BettY")
+  //       .expect(400)
+  //       .then(({ body: { message } }) => {
+  //         expect(message).toEqual("Bad Request");
+  //       });
+  //   });
+  // });
 
   describe("GET: /api/articles (queries)", () => {
     test('GET 200 - returs an array that is sorted by default by "created_at" and in DESC order with all articles', () => {
