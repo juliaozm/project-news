@@ -2,11 +2,11 @@ const {
   fetchTopics,
   fetchArticles,
   fetchUsers,
-  fetchUserByUsername,
   fetchUserByEmail,
   fetchArticleById,
   fetchCommentsByArticleId,
   addNewComment,
+  addNewUser,
   changeVotesOnArticle,
   deleteComment,
   fetchEndpoints,
@@ -79,11 +79,11 @@ const getUsers = (request, response, next) => {
     .catch((err) => next(err));
 };
 
-const getUserByUsername = (request, response, next) => {
-  const { username } = request.params;
-  fetchUserByUsername(username)
+const postNewUser = (request, response, next) => {
+  const newUser = request.body;
+  addNewUser(newUser)
     .then((user) => {
-      response.status(200).send({ user });
+      response.status(201).send({ user });
     })
     .catch((err) => next(err));
 };
@@ -121,8 +121,8 @@ module.exports = {
   getCommentsByArticleId,
   postCommentByArticleId,
   updateArticle,
+  postNewUser,
   getUsers,
-  getUserByUsername,
   getUserByEmail,
   deleteCommentById,
   getAllEndpoints,

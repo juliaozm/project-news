@@ -235,6 +235,370 @@ describe("news-project", () => {
     });
   });
 
+  describe("POST: /api/users", () => {
+    test("POST: 201 - responses with a user object if a valid email and username dont't exist in the users database", () => {
+      const newUser = {
+        email: "example@gmail.com",
+        username: "exampleuser",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              email: expect.any(String),
+              username: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 201 - responses with a user object if the validator trims leading and trailing whitespaces", () => {
+      const newUser = {
+        email: " iamuseriamuser@gmail.com ",
+        username: " iamuseriamuser1 ",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              email: expect.any(String),
+              username: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 201 - responses with a user object if special characters, such as hyphens, underscores, or dots are in the email address", () => {
+      const newUser = {
+        email: "i.aaaam-us_er@gmail.com",
+        username: "iamuseriamuser1",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              email: expect.any(String),
+              username: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 201 - responses with a user object if hyphen and dots are in domain of the email", () => {
+      const newUser = {
+        email: "iamuseriamuser1@examp-le.com",
+        username: "iamuseriamuser1",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              email: expect.any(String),
+              username: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 201 - responses with a user object if subdomain in the email address", () => {
+      const newUser = {
+        email: "rogerrogermain@subdomain.example.com",
+        username: "iamuseriamuser1",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              email: expect.any(String),
+              username: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 201 - responses with a user object if username cointains underscores", () => {
+      const newUser = {
+        email: "iamuseriamuser1@example.com",
+        username: "i_am_user",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              email: expect.any(String),
+              username: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 409 - responses with error if both valid email and username exist in the users database", () => {
+      const newUser = {
+        email: "rogersop@gmail.com",
+        username: "rogersop",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(409)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("This user already exists");
+        });
+    });
+
+    test("POST: 409 - responses with error if valid email exists in the users database", () => {
+      const newUser = {
+        email: "rogersop@gmail.com",
+        username: "rogersop33",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(409)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("This email already exists");
+        });
+    });
+
+    test("POST: 409 - responses with error if valid username exists in the users database", () => {
+      const newUser = {
+        email: "rogersop1222@gmail.com",
+        username: "rogersop",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(409)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("This username already exists");
+        });
+    });
+
+    test("POST: 400 - responses with error if no username", () => {
+      const newUser = {
+        email: "ro4gersop1222@gmail.com",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid user data");
+        });
+    });
+
+    test("POST: 400 - responses with error if no email", () => {
+      const newUser = {
+        username: "ro4gersop1222",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid user data");
+        });
+    });
+
+    test("POST: 400 - responses with error if no email", () => {
+      const newUser = {
+        email: "",
+        username: "",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid user data");
+        });
+    });
+
+    test("POST: 400 - responses with error if username starts with an underscore character", () => {
+      const newUser = {
+        email: "ro4gersop1222@gmail.com",
+        username: "_rogersop",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid username");
+        });
+    });
+
+    test("POST: 400 - responses with error if username contains dot character", () => {
+      const newUser = {
+        email: "ro4gersop1222@gmail.com",
+        username: "roge.rsop",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid username");
+        });
+    });
+
+    test("POST: 400 - responses with error if username contains hyphen character", () => {
+      const newUser = {
+        email: "ro4gersop1222@gmail.com",
+        username: "roge-rsop",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid username");
+        });
+    });
+
+    test("POST: 400 - responses with error if username contains less than 8 characters", () => {
+      const newUser = {
+        email: "rogeroger@gmail.com",
+        username: "roge",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid username");
+        });
+    });
+
+    test("POST: 400 - responses with error if username contains uppercase characters", () => {
+      const newUser = {
+        email: "rogeroger@gmail.com",
+        username: "RogerroGermain",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid username");
+        });
+    });
+
+    test("POST: 400 - responses with error if email is without Top-Level Domain", () => {
+      const newUser = {
+        email: "rogeroger@example",
+        username: "rogerrogermain",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid email");
+        });
+    });
+
+    test("POST: 400 - responses with error if email without @ symbol", () => {
+      const newUser = {
+        email: "exampleexample.com",
+        username: "rogerrogermain",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid email");
+        });
+    });
+
+    test("POST: 400 - responses with error if email local part (before the @) is missing", () => {
+      const newUser = {
+        email: "@example.com",
+        username: "rogerrogermain",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid email");
+        });
+    });
+
+    test("POST: 400 - responses with error if email domain part (after the @)  is missing", () => {
+      const newUser = {
+        email: "rogerrogermain@",
+        username: "rogerrogermain",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid email");
+        });
+    });
+
+    test("POST: 400 - responses with error if email is with multiple @ symbols", () => {
+      const newUser = {
+        email: "rogerrogermain@rogerrogermain@rogerrogermain.com",
+        username: "rogerrogermain",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid email");
+        });
+    });
+
+    test("POST: 400 - responses with error if email is with underscore character in the domain part", () => {
+      const newUser = {
+        email: "rogerrogermain@exa_mple.com",
+        username: "rogerrogermain",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid email");
+        });
+    });
+  });
+
   describe("POST: /api/articles/:article_id/comments", () => {
     test('POST: 201 - responses with a comment object if "username" exists in users database and "body" is valid', () => {
       const newComment = {
@@ -629,115 +993,60 @@ describe("news-project", () => {
         });
     });
 
-    test('GET: 400 - returns a message "Not valid email" without Top-Level Domain', () => {
+    test('GET: 400 - returns a message "Invalid email" without Top-Level Domain', () => {
       return request(app)
         .get("/api/users/example@example")
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toEqual("Not valid email");
+          expect(message).toEqual("Invalid email");
         });
     });
 
-    test('GET: 400 - returns a message "Not valid email" without "@" symbol', () => {
+    test('GET: 400 - returns a message "Invalid email" without "@" symbol', () => {
       return request(app)
         .get("/api/users/exampleexample.com")
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toEqual("Not valid email");
+          expect(message).toEqual("Invalid email");
         });
     });
 
-    test('GET: 400 - returns a message "Not valid email" if the local part (before the "@") is missing', () => {
+    test('GET: 400 - returns a message "Invalid email" if the local part (before the "@") is missing', () => {
       return request(app)
         .get("/api/users/@example.com")
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toEqual("Not valid email");
+          expect(message).toEqual("Invalid email");
         });
     });
 
-    test('GET: 400 - returns a message "Not valid email" if a domain part (after the "@")  is missing', () => {
+    test('GET: 400 - returns a message "Invalid email" if a domain part (after the "@")  is missing', () => {
       return request(app)
         .get("/api/users/example@")
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toEqual("Not valid email");
+          expect(message).toEqual("Invalid email");
         });
     });
 
-    test('GET: 400 - returns a message "Not valid email" with multiple "@" symbols in the email address', () => {
+    test('GET: 400 - returns a message "Invalid email" with multiple "@" symbols in the email address', () => {
       return request(app)
         .get("/api/users/example@example@example.com")
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toEqual("Not valid email");
+          expect(message).toEqual("Invalid email");
         });
     });
 
-    test('GET: 400 - returns a message "Not valid email" with underscore character in the domain part', () => {
+    test('GET: 400 - returns a message "Invalid email" with underscore character in the domain part', () => {
       return request(app)
         .get("/api/users/example@exa_mple.com")
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toEqual("Not valid email");
+          expect(message).toEqual("Invalid email");
         });
     });
   });
-
-  // describe("GET: /api/users/:username", () => {
-  //   test("GET: 200 - a get request should return a user object with following properties", () => {
-  //     const username = "lurker"
-  //     return request(app)
-  //       .get(`/api/users/${username}`)
-  //       .expect(200)
-  //       .then(({ body: { user } }) => {
-  //         expect(user).toBeInstanceOf(Object);
-  //         expect(user).toEqual(
-  //           expect.objectContaining({
-  //             username: expect.any(String),
-  //             email: expect.any(String),
-  //             avatar_url: expect.any(String),
-  //           })
-  //         );
-  //       });
-  //   });
-
-  //   test('GET: 404 - returns a message "Username Not Found" when "username" does not exist', () => {
-  //     return request(app)
-  //       .get("/api/users/anonymous")
-  //       .expect(404)
-  //       .then(({ body: { message } }) => {
-  //         expect(message).toEqual("Username Not Found");
-  //       });
-  //   });
-
-  //   test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
-  //     return request(app)
-  //       .get("/api/users/123wef")
-  //       .expect(400)
-  //       .then(({ body: { message } }) => {
-  //         expect(message).toEqual("Bad Request");
-  //       });
-  //   });
-
-  //   test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
-  //     return request(app)
-  //       .get("/api/users/_wef")
-  //       .expect(400)
-  //       .then(({ body: { message } }) => {
-  //         expect(message).toEqual("Bad Request");
-  //       });
-  //   });
-
-  //   test('GET: 400 - returns a message "Bad Request" when a bad "username" is passed', () => {
-  //     return request(app)
-  //       .get("/api/users/BettY")
-  //       .expect(400)
-  //       .then(({ body: { message } }) => {
-  //         expect(message).toEqual("Bad Request");
-  //       });
-  //   });
-  // });
 
   describe("GET: /api/articles (queries)", () => {
     test('GET 200 - returs an array that is sorted by default by "created_at" and in DESC order with all articles', () => {

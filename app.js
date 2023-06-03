@@ -5,11 +5,11 @@ const {
   getTopics,
   getArticles,
   getUsers,
-  getUserByUsername,
   getUserByEmail,
   getArticleById,
   getCommentsByArticleId,
   postCommentByArticleId,
+  postNewUser,
   updateArticle,
   deleteCommentById,
   getAllEndpoints,
@@ -27,6 +27,7 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 app.patch("/api/articles/:article_id", updateArticle);
 app.get("/api/users", getUsers);
 app.get("/api/users/:email", getUserByEmail);
+app.post("/api/users", postNewUser);
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.use((err, request, response, next) => {
