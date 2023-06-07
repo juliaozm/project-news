@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const corsOptions = { credentials: true };
 const {
   getTopics,
   getArticles,
@@ -14,9 +15,11 @@ const {
   deleteCommentById,
   getAllEndpoints,
 } = require("./controllers/controllers.js");
+const cookieParser = require("cookie-parser");
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/api", getAllEndpoints);
 app.get("/api/topics", getTopics);

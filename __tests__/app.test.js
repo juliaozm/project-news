@@ -240,6 +240,7 @@ describe("news-project", () => {
       const newUser = {
         email: "example@gmail.com",
         username: "exampleuser",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -249,8 +250,10 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
+              password: expect.any(String),
               avatar_url: expect.any(String),
             })
           );
@@ -261,6 +264,7 @@ describe("news-project", () => {
       const newUser = {
         email: " iamuseriamuser@gmail.com ",
         username: " iamuseriamuser1 ",
+        password: " Password123456 ",
       };
       return request(app)
         .post("/api/users")
@@ -270,8 +274,58 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
+              password: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 201 - responses with a user object if password has at least 1 uppercase, 1 lowercase, 1 number, and 8 characters long", () => {
+      const newUser = {
+        email: "rogerrogermain@example.com",
+        username: "rogerrogermain",
+        password: "Passwor1",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              user_id: expect.any(String),
+              email: expect.any(String),
+              username: expect.any(String),
+              password: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 201 - responses with a user object if password has special characters", () => {
+      const newUser = {
+        email: "rogerrogermain@example.com",
+        username: "rogerrogermain",
+        password: "Pass&423!2@#3$5%44^99*1",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              user_id: expect.any(String),
+              email: expect.any(String),
+              username: expect.any(String),
+              password: expect.any(String),
               avatar_url: expect.any(String),
             })
           );
@@ -282,6 +336,7 @@ describe("news-project", () => {
       const newUser = {
         email: "i.aaaam-us_er@gmail.com",
         username: "iamuseriamuser1",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -291,8 +346,10 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
+              password: expect.any(String),
               avatar_url: expect.any(String),
             })
           );
@@ -303,6 +360,7 @@ describe("news-project", () => {
       const newUser = {
         email: "iamuseriamuser1@examp-le.com",
         username: "iamuseriamuser1",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -312,8 +370,10 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
+              password: expect.any(String),
               avatar_url: expect.any(String),
             })
           );
@@ -324,6 +384,7 @@ describe("news-project", () => {
       const newUser = {
         email: "rogerrogermain@subdomain.example.com",
         username: "iamuseriamuser1",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -333,8 +394,10 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
+              password: expect.any(String),
               avatar_url: expect.any(String),
             })
           );
@@ -345,6 +408,7 @@ describe("news-project", () => {
       const newUser = {
         email: "iamuseriamuser1@example.com",
         username: "i_am_user",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -354,8 +418,10 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
+              password: expect.any(String),
               avatar_url: expect.any(String),
             })
           );
@@ -366,6 +432,7 @@ describe("news-project", () => {
       const newUser = {
         email: "rogersop@gmail.com",
         username: "rogersop",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -380,6 +447,7 @@ describe("news-project", () => {
       const newUser = {
         email: "rogersop@gmail.com",
         username: "rogersop33",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -394,6 +462,7 @@ describe("news-project", () => {
       const newUser = {
         email: "rogersop1222@gmail.com",
         username: "rogersop",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -407,6 +476,21 @@ describe("news-project", () => {
     test("POST: 400 - responses with error if no username", () => {
       const newUser = {
         email: "ro4gersop1222@gmail.com",
+        password: "Password123456",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid user data");
+        });
+    });
+
+    test("POST: 400 - responses with error if no password", () => {
+      const newUser = {
+        email: "ro4gersop1222@gmail.com",
+        username: "rogersop1222",
       };
       return request(app)
         .post("/api/users")
@@ -420,6 +504,7 @@ describe("news-project", () => {
     test("POST: 400 - responses with error if no email", () => {
       const newUser = {
         username: "ro4gersop1222",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -430,10 +515,11 @@ describe("news-project", () => {
         });
     });
 
-    test("POST: 400 - responses with error if no email", () => {
+    test("POST: 400 - responses with error if email, password, and username are empty", () => {
       const newUser = {
         email: "",
         username: "",
+        password: "",
       };
       return request(app)
         .post("/api/users")
@@ -448,6 +534,7 @@ describe("news-project", () => {
       const newUser = {
         email: "ro4gersop1222@gmail.com",
         username: "_rogersop",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -462,6 +549,7 @@ describe("news-project", () => {
       const newUser = {
         email: "ro4gersop1222@gmail.com",
         username: "roge.rsop",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -476,6 +564,7 @@ describe("news-project", () => {
       const newUser = {
         email: "ro4gersop1222@gmail.com",
         username: "roge-rsop",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -490,6 +579,7 @@ describe("news-project", () => {
       const newUser = {
         email: "rogeroger@gmail.com",
         username: "roge",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -504,6 +594,7 @@ describe("news-project", () => {
       const newUser = {
         email: "rogeroger@gmail.com",
         username: "RogerroGermain",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -516,8 +607,9 @@ describe("news-project", () => {
 
     test("POST: 400 - responses with error if email is without Top-Level Domain", () => {
       const newUser = {
-        email: "rogeroger@example",
-        username: "rogerrogermain",
+        email: "gergerroro@example",
+        username: "gergerroro",
+        password: "Password12",
       };
       return request(app)
         .post("/api/users")
@@ -532,6 +624,7 @@ describe("news-project", () => {
       const newUser = {
         email: "exampleexample.com",
         username: "rogerrogermain",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -546,6 +639,7 @@ describe("news-project", () => {
       const newUser = {
         email: "@example.com",
         username: "rogerrogermain",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -560,6 +654,7 @@ describe("news-project", () => {
       const newUser = {
         email: "rogerrogermain@",
         username: "rogerrogermain",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -574,6 +669,7 @@ describe("news-project", () => {
       const newUser = {
         email: "rogerrogermain@rogerrogermain@rogerrogermain.com",
         username: "rogerrogermain",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -588,6 +684,7 @@ describe("news-project", () => {
       const newUser = {
         email: "rogerrogermain@exa_mple.com",
         username: "rogerrogermain",
+        password: "Password123456",
       };
       return request(app)
         .post("/api/users")
@@ -597,12 +694,87 @@ describe("news-project", () => {
           expect(message).toBe("Invalid email");
         });
     });
+
+    test("POST: 400 - responses with error if password has only lowercase letters", () => {
+      const newUser = {
+        email: "rogerrogermain@example.com",
+        username: "rogerrogermain",
+        password: "passwordpassword",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid password");
+        });
+    });
+
+    test("POST: 400 - responses with error if password has only uppercase letters", () => {
+      const newUser = {
+        email: "rogerrogermain@example.com",
+        username: "rogerrogermain",
+        password: "PSSWORDPASSWORD",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid password");
+        });
+    });
+
+    test("POST: 400 - responses with error if password has only letters", () => {
+      const newUser = {
+        email: "rogerrogermain@example.com",
+        username: "rogerrogermain",
+        password: "1234567890",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid password");
+        });
+    });
+
+    test("POST: 400 - responses with error if password has less than 8 characters", () => {
+      const newUser = {
+        email: "rogerrogermain@example.com",
+        username: "rogerrogermain",
+        password: "Pass12",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid password");
+        });
+    });
+
+    test("POST: 400 - responses with error if password has 8 characters but no number", () => {
+      const newUser = {
+        email: "rogerrogermain@example.com",
+        username: "rogerrogermain",
+        password: "Password",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid password");
+        });
+    });
   });
 
   describe("POST: /api/articles/:article_id/comments", () => {
     test('POST: 201 - responses with a comment object if "username" exists in users database and "body" is valid', () => {
       const newComment = {
-        email: "icellusedkars@examp-le.com",
+        username: "icellusedkars",
         body: "Great comment!",
       };
       return request(app)
@@ -616,7 +788,7 @@ describe("news-project", () => {
 
     test("POST: 201 - responses with a comment object that cointains the following properties when passed a valid request body", () => {
       const newComment = {
-        email: "icellusedkars@examp-le.com",
+        username: "icellusedkars",
         body: "Great comment!",
       };
       return request(app)
@@ -628,7 +800,6 @@ describe("news-project", () => {
             expect.objectContaining({
               article_id: expect.any(Number),
               author: expect.any(String),
-              email: expect.any(String),
               body: expect.any(String),
               votes: expect.any(Number),
               created_at: expect.any(Number),
@@ -639,7 +810,7 @@ describe("news-project", () => {
 
     test("POST: 201 - responses with a comment object that ignores any additional keys passed in a request body", () => {
       const newComment = {
-        email: "icellusedkars@examp-le.com",
+        username: "icellusedkars",
         body: "Great comment!",
         greetings: "Hello!",
         age: 32,
@@ -654,7 +825,6 @@ describe("news-project", () => {
             expect.objectContaining({
               article_id: expect.any(Number),
               author: expect.any(String),
-              email: expect.any(String),
               body: expect.any(String),
               votes: expect.any(Number),
               created_at: expect.any(Number),
@@ -663,9 +833,9 @@ describe("news-project", () => {
         });
     });
 
-    test('POST: 404 - returns a message "This user does not exist" when there is no such "username" in users database', () => {
+    test('POST: 404 - returns an error when there is no such "username" in users database', () => {
       const newComment = {
-        email: "ololo@gmail.com",
+        username: "gooduser",
         body: "Great comment!",
       };
       return request(app)
@@ -677,31 +847,31 @@ describe("news-project", () => {
         });
     });
 
-    test('POST: 400 - returns a message "Bad request" when a request body is empty', () => {
+    test("POST: 400 - returns an error when a request body is empty", () => {
       const newComment = {};
       return request(app)
         .post("/api/articles/1/comments")
         .send(newComment)
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("Bad Request");
+          expect(message).toBe("Invalid data sent");
         });
     });
 
-    test('POST: 400 - returns a message "Bad request" when a request body missing a required "body" property', () => {
+    test('POST: 400 - returns an error when a request body missing a required "body" property', () => {
       const newComment = {
-        email: "butter_bridge@gmail.com",
+        username: "icellusedkars",
       };
       return request(app)
         .post("/api/articles/1/comments")
         .send(newComment)
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("Bad Request");
+          expect(message).toBe("Invalid data sent");
         });
     });
 
-    test('POST: 400 - returns a message "Bad request" when a request body missing a required "username" property', () => {
+    test('POST: 400 - returns an error when a request body missing a required "username" property', () => {
       const newComment = {
         body: "Great comment!",
       };
@@ -710,13 +880,13 @@ describe("news-project", () => {
         .send(newComment)
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("Bad Request");
+          expect(message).toBe("Invalid data sent");
         });
     });
 
-    test('POST: 400 - returns a message "Bad request" when a request body has empty values', () => {
+    test("POST: 400 - returns an error when a request body has empty values", () => {
       const newComment = {
-        email: "",
+        username: "",
         body: "",
       };
       return request(app)
@@ -724,13 +894,13 @@ describe("news-project", () => {
         .send(newComment)
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("Bad Request");
+          expect(message).toBe("Invalid data sent");
         });
     });
 
-    test('POST: 400 - returns a message "Bad request" when invalid article_id is passed', () => {
+    test("POST: 400 - returns an error when invalid article_id is passed", () => {
       const newComment = {
-        email: "butter_bridge@gmail.com",
+        username: "icellusedkars",
         body: "Great comment!",
       };
       return request(app)
@@ -738,7 +908,7 @@ describe("news-project", () => {
         .send(newComment)
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("Bad Request");
+          expect(message).toBe("Invalid data sent");
         });
     });
   });
@@ -893,6 +1063,8 @@ describe("news-project", () => {
           users.forEach((user) => {
             expect(user).toEqual(
               expect.objectContaining({
+                user_id: expect.any(String),
+                password: expect.any(String),
                 username: expect.any(String),
                 email: expect.any(String),
                 avatar_url: expect.any(String),
@@ -913,6 +1085,8 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
+              password: expect.any(String),
               username: expect.any(String),
               email: expect.any(String),
               avatar_url: expect.any(String),
@@ -929,6 +1103,8 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
+              password: expect.any(String),
               username: expect.any(String),
               email: expect.any(String),
               avatar_url: expect.any(String),
@@ -945,6 +1121,8 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
+              password: expect.any(String),
               username: expect.any(String),
               email: expect.any(String),
               avatar_url: expect.any(String),
@@ -960,6 +1138,8 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
+              password: expect.any(String),
               username: expect.any(String),
               email: expect.any(String),
               avatar_url: expect.any(String),
@@ -976,6 +1156,8 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
+              user_id: expect.any(String),
+              password: expect.any(String),
               username: expect.any(String),
               email: expect.any(String),
               avatar_url: expect.any(String),

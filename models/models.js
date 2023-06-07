@@ -1,9 +1,11 @@
 const db = require("../db/connection.js");
 const fs = require("fs/promises");
+const bcrypt = require("bcrypt");
 const {
   isPositiveInteger,
   isEmailValid,
   isUsernameValid,
+  isPasswordValid,
 } = require("./validations.js");
 
 const fetchTopics = () => {
@@ -152,22 +154,25 @@ const fetchCommentsByArticleId = (article_id) => {
 
 const addNewComment = (article_id, newCommentData) => {
   if (
-    Object.keys(newCommentData).length <= 1 ||
-    !newCommentData.email ||
-    !newCommentData.body
+    Object.keys(newCommentData).length < 2 ||
+    !newCommentData.username ||
+    !newCommentData.body ||
+    isNaN(article_id) ||
+    article_id <= 0 ||
+    !Number.isInteger(Number(article_id))
   ) {
-    return Promise.reject({ status: 400, message: "Bad Request" });
+    return Promise.reject({ status: 400, message: "Invalid data sent" });
   }
 
-  const { email, body, votes = 0 } = newCommentData;
+  const { username, body, votes = 0 } = newCommentData;
 
   // checking if the username exists in the users database
   const userString = `
         SELECT * FROM users
-        WHERE email = $1;
+        WHERE username = $1;
     `;
   return db
-    .query(userString, [email])
+    .query(userString, [username])
     .then(({ rowCount, rows }) => {
       if (rowCount === 0) {
         // user doesn't exist
@@ -185,16 +190,15 @@ const addNewComment = (article_id, newCommentData) => {
       const created_at = new Date();
       const commentString = `
             INSERT INTO comments
-                (article_id, author, email, body, votes, created_at)
+                (article_id, author, body, votes, created_at)
             VALUES
-                ($1, $2, $3, $4, $5, $6)
+                ($1, $2, $3, $4, $5)
             RETURNING *;
         `;
       return db
         .query(commentString, [
           article_id,
           user.username,
-          user.email,
           body,
           votes,
           created_at,
@@ -240,14 +244,24 @@ const fetchUsers = () => {
 };
 
 const addNewUser = async (newUser) => {
-  const { email, username } = newUser;
-
-  if (Object.keys(newUser).length < 2 || !newUser.email || !newUser.username) {
+  if (
+    Object.keys(newUser).length < 3 ||
+    !newUser.email ||
+    !newUser.username ||
+    !newUser.password
+  ) {
     return Promise.reject({ status: 400, message: "Invalid user data" });
   }
 
+  const email = newUser.email.trim();
+  const username = newUser.username.trim();
+  const password = newUser.password.trim();
+
   await isEmailValid(email);
   await isUsernameValid(username);
+  await isPasswordValid(password);
+
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const emailStr = `
     SELECT * FROM users
@@ -282,24 +296,27 @@ const addNewUser = async (newUser) => {
   } else if (emailResp.rowCount === 0 && usernameResp.rowCount === 0) {
     const newUserString = `
         INSERT INTO users
-            (email, username)
+            (email, username, password)
         VALUES
-            ($1, $2)
+            ($1, $2, $3)
         RETURNING *;
       `;
-    return db.query(newUserString, [email, username]).then(({ rows }) => {
-      return rows[0];
-    });
+    return db
+      .query(newUserString, [email, username, hashedPassword])
+      .then(({ rows }) => {
+        return rows[0];
+      });
   }
 };
 
 const fetchUserByEmail = async (email) => {
-  await isEmailValid(email);
+  const trimmedEmail = email.trim();
+  await isEmailValid(trimmedEmail);
   const sqlString = `
     SELECT * FROM users
     WHERE email = $1;
   `;
-  const { rows, rowCount } = await db.query(sqlString, [email.trim()]);
+  const { rows, rowCount } = await db.query(sqlString, [trimmedEmail]);
   if (rowCount === 0) {
     return Promise.reject({ status: 404, message: "User Not Found" });
   } else {
