@@ -8,7 +8,10 @@ const {
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
-    .query(`DROP TABLE IF EXISTS comments;`)
+    .query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`)
+    .then(() => {
+      return db.query(`DROP TABLE IF EXISTS comments;`);
+    })
     .then(() => {
       return db.query(`DROP TABLE IF EXISTS articles;`);
     })
@@ -27,8 +30,10 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
 
       const usersTablePromise = db.query(`
       CREATE TABLE users (
-        email VARCHAR PRIMARY KEY,
-        username VARCHAR NOT NULL,
+        user_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+        email VARCHAR NOT NULL UNIQUE,
+        password VARCHAR NOT NULL,
+        username VARCHAR NOT NULL UNIQUE,
         avatar_url VARCHAR DEFAULT 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
       );`);
 
@@ -40,7 +45,6 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         article_id SERIAL PRIMARY KEY,
         title VARCHAR NOT NULL,
         topic VARCHAR NOT NULL REFERENCES topics(slug),
-        email VARCHAR NOT NULL REFERENCES users(email),
         author VARCHAR NOT NULL,
         body VARCHAR NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
@@ -54,7 +58,6 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         comment_id SERIAL PRIMARY KEY,
         body VARCHAR NOT NULL,
         article_id INT REFERENCES articles(article_id) NOT NULL,
-        email VARCHAR NOT NULL REFERENCES users(email),
         author VARCHAR NOT NULL,
         votes INT DEFAULT 0 NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
@@ -68,10 +71,11 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       const topicsPromise = db.query(insertTopicsQueryStr);
 
       const insertUsersQueryStr = format(
-        "INSERT INTO users ( email, username, avatar_url) VALUES %L;",
-        userData.map(({ email, username, avatar_url }) => [
+        "INSERT INTO users (email, username, password, avatar_url) VALUES %L RETURNING *;",
+        userData.map(({ email, username, password, avatar_url }) => [
           email,
           username,
+          password,
           avatar_url,
         ])
       );
@@ -82,27 +86,17 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     .then(() => {
       const formattedArticleData = articleData.map(convertTimestampToDate);
       const insertArticlesQueryStr = format(
-        "INSERT INTO articles (title, topic, email, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;",
+        "INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;",
         formattedArticleData.map(
           ({
             title,
             topic,
-            email,
             author,
             body,
             created_at,
             votes = 0,
             article_img_url,
-          }) => [
-            title,
-            topic,
-            email,
-            author,
-            body,
-            created_at,
-            votes,
-            article_img_url,
-          ]
+          }) => [title, topic, author, body, created_at, votes, article_img_url]
         )
       );
 
@@ -113,11 +107,10 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       const formattedCommentData = formatComments(commentData, articleIdLookup);
 
       const insertCommentsQueryStr = format(
-        "INSERT INTO comments (body, email, author, article_id, votes, created_at) VALUES %L;",
+        "INSERT INTO comments (body, author, article_id, votes, created_at) VALUES %L;",
         formattedCommentData.map(
           ({ body, email, author, article_id, votes = 0, created_at }) => [
             body,
-            email,
             author,
             article_id,
             votes,
