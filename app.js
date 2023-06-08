@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const corsOptions = { credentials: true };
 const {
   getTopics,
   getArticles,
@@ -14,12 +13,15 @@ const {
   updateArticle,
   deleteCommentById,
   getAllEndpoints,
+  postLoginUser,
+  getRefreshToken,
+  deleteRefreshToken,
 } = require("./controllers/controllers.js");
 const cookieParser = require("cookie-parser");
 
-app.use(cors(corsOptions));
-app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
+app.use(express.json());
 
 app.get("/api", getAllEndpoints);
 app.get("/api/topics", getTopics);
@@ -32,6 +34,9 @@ app.get("/api/users", getUsers);
 app.get("/api/users/:email", getUserByEmail);
 app.post("/api/users", postNewUser);
 app.delete("/api/comments/:comment_id", deleteCommentById);
+app.post("/api/login", postLoginUser);
+app.get("/api/refresh_token", getRefreshToken);
+app.delete("/api/refresh_token", deleteRefreshToken);
 
 app.use((err, request, response, next) => {
   if (err.status && err.message) {

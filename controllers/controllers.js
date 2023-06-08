@@ -1,3 +1,5 @@
+const jwtTokens = require("../models/jwt-helpers.js");
+const jwt = require("jsonwebtoken");
 const {
   fetchTopics,
   fetchArticles,
@@ -11,6 +13,7 @@ const {
   deleteComment,
   fetchEndpoints,
   fetchTotalArticlesNumber,
+  checkAndComparePassword,
 } = require("../models/models.js");
 
 const getTopics = (request, response, next) => {
@@ -92,7 +95,13 @@ const getUserByEmail = (request, response, next) => {
   const { email } = request.params;
   fetchUserByEmail(email)
     .then((user) => {
-      response.status(200).send({ user });
+      response.status(200).send({
+        user: {
+          email: user.email,
+          username: user.username,
+          avatar_url: user.avatar_url,
+        },
+      });
     })
     .catch((err) => next(err));
 };
@@ -114,6 +123,60 @@ const getAllEndpoints = (request, response, next) => {
     .catch((err) => next(err));
 };
 
+const postLoginUser = async (request, response, next) => {
+  try {
+    const { email, password } = request.body;
+    const user = await fetchUserByEmail(email);
+    await checkAndComparePassword(user, password);
+    //JWT
+    let tokens = jwtTokens({
+      user: {
+        email: user.email,
+        username: user.username,
+        avatar_url: user.avatar_url,
+      },
+    });
+    response.cookie("refresh_token", tokens.refreshToken, {
+      httpOnly: true,
+    });
+    response.status(201).send(tokens);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getRefreshToken = (request, response, next) => {
+  try {
+    const refreshToken = request.cookies.refresh_token;
+    if (refreshToken == null) {
+      return response.status(401).send({ error: "Null refresh token" });
+    }
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (error, user) => {
+        if (error) return response.status(403).json({ error: error.message });
+        let tokens = jwtTokens(user);
+        response.cookie("refresh_token", tokens.refreshToken, {
+          httpOnly: true,
+        });
+        response.status(200).send(tokens);
+      }
+    );
+  } catch (error) {
+    response.status(401).send({ error: error.message });
+  }
+};
+
+const deleteRefreshToken = (request, response, next) => {
+  try {
+    response.clearCookie("refresh_token");
+    return response.status(200).send({ message: "Refresh token deleted" });
+  } catch (error) {
+    response.status(401).send({ error: error.message });
+  }
+};
+
 module.exports = {
   getTopics,
   getArticles,
@@ -126,4 +189,7 @@ module.exports = {
   getUserByEmail,
   deleteCommentById,
   getAllEndpoints,
+  postLoginUser,
+  getRefreshToken,
+  deleteRefreshToken,
 };

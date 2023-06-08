@@ -6,6 +6,7 @@ const {
   isEmailValid,
   isUsernameValid,
   isPasswordValid,
+  comparePasswords,
 } = require("./validations.js");
 
 const fetchTopics = () => {
@@ -240,7 +241,14 @@ const fetchUsers = () => {
   const sqlString = `
         SELECT * FROM users;
     `;
-  return db.query(sqlString).then(({ rows }) => rows);
+  return db.query(sqlString).then(({ rows }) => {
+    const users = rows.map(({ email, username, avatar_url }) => ({
+      email,
+      username,
+      avatar_url,
+    }));
+    return users;
+  });
 };
 
 const addNewUser = async (newUser) => {
@@ -253,14 +261,13 @@ const addNewUser = async (newUser) => {
     return Promise.reject({ status: 400, message: "Invalid user data" });
   }
 
-  const email = newUser.email.trim();
+  const email = newUser.email.trim().toLowerCase();
   const username = newUser.username.trim();
   const password = newUser.password.trim();
 
   await isEmailValid(email);
   await isUsernameValid(username);
   await isPasswordValid(password);
-
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const emailStr = `
@@ -304,13 +311,21 @@ const addNewUser = async (newUser) => {
     return db
       .query(newUserString, [email, username, hashedPassword])
       .then(({ rows }) => {
-        return rows[0];
+        const user = {
+          email: rows[0].email,
+          username: rows[0].username,
+          avatar_url: rows[0].avatar_url,
+        };
+        return user;
       });
   }
 };
 
 const fetchUserByEmail = async (email) => {
-  const trimmedEmail = email.trim();
+  if (!email || email == null) {
+    return Promise.reject({ status: 400, message: "Invalid user data" });
+  }
+  const trimmedEmail = email.trim().toLowerCase();
   await isEmailValid(trimmedEmail);
   const sqlString = `
     SELECT * FROM users
@@ -322,6 +337,19 @@ const fetchUserByEmail = async (email) => {
   } else {
     return rows[0];
   }
+};
+
+const checkAndComparePassword = async (user, password) => {
+  if (!password || password == null) {
+    return Promise.reject({ status: 400, message: "Invalid user data" });
+  }
+  const trimmedPassword = password.trim();
+  await isPasswordValid(trimmedPassword);
+  const response = await bcrypt.compare(trimmedPassword, user.password);
+  if (!response) {
+    return Promise.reject({ status: 401, message: "Password is incorrect" });
+  }
+  return response;
 };
 
 const deleteComment = (comment_id) => {
@@ -354,4 +382,5 @@ module.exports = {
   deleteComment,
   fetchEndpoints,
   fetchTotalArticlesNumber,
+  checkAndComparePassword,
 };

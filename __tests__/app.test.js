@@ -240,7 +240,7 @@ describe("news-project", () => {
       const newUser = {
         email: "example@gmail.com",
         username: "exampleuser",
-        password: "Password123456",
+        password: "Passwo22rd3122222",
       };
       return request(app)
         .post("/api/users")
@@ -250,11 +250,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
-              password: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -274,11 +278,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
-              password: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -298,11 +306,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
-              password: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -322,11 +334,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
-              password: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -346,11 +362,43 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
-              password: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 201 - responses with a user object if email has uppercase characters", () => {
+      const newUser = {
+        email: "IaaaamUs_er@gmail.com",
+        username: "iamuseriamuser1",
+        password: "Password123456",
+      };
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(({ body: { user } }) => {
+          expect(user).toBeInstanceOf(Object);
+          expect(user).toEqual(
+            expect.objectContaining({
+              email: expect.any(String),
+              username: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -370,11 +418,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
-              password: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -394,11 +446,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
-              password: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -418,11 +474,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
               email: expect.any(String),
               username: expect.any(String),
-              password: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -830,6 +890,13 @@ describe("news-project", () => {
               created_at: expect.any(Number),
             })
           );
+          expect(comment).not.toEqual(
+            expect.objectContaining({
+              city: expect.anything(),
+              greetings: expect.anything(),
+              age: expect.anything(),
+            })
+          );
         });
     });
 
@@ -1063,11 +1130,15 @@ describe("news-project", () => {
           users.forEach((user) => {
             expect(user).toEqual(
               expect.objectContaining({
-                user_id: expect.any(String),
-                password: expect.any(String),
                 username: expect.any(String),
                 email: expect.any(String),
                 avatar_url: expect.any(String),
+              })
+            );
+            expect(user).not.toEqual(
+              expect.objectContaining({
+                password: expect.any(String),
+                user_id: expect.any(String),
               })
             );
           });
@@ -1085,11 +1156,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
-              password: expect.any(String),
               username: expect.any(String),
               email: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -1103,11 +1178,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
-              password: expect.any(String),
               username: expect.any(String),
               email: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -1121,11 +1200,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
-              password: expect.any(String),
               username: expect.any(String),
               email: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -1138,11 +1221,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
-              password: expect.any(String),
               username: expect.any(String),
               email: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -1156,11 +1243,15 @@ describe("news-project", () => {
           expect(user).toBeInstanceOf(Object);
           expect(user).toEqual(
             expect.objectContaining({
-              user_id: expect.any(String),
-              password: expect.any(String),
               username: expect.any(String),
               email: expect.any(String),
               avatar_url: expect.any(String),
+            })
+          );
+          expect(user).not.toEqual(
+            expect.objectContaining({
+              password: expect.any(String),
+              user_id: expect.any(String),
             })
           );
         });
@@ -1531,6 +1622,169 @@ describe("news-project", () => {
         .expect(404)
         .then(({ body: { message } }) => {
           expect(message).toBe("Limit exceeds the total number of articles");
+        });
+    });
+  });
+
+  describe("POST: /api/login", () => {
+    test("POST: 201 - returns a user object with following properties", () => {
+      const loginnedUser = {
+        email: "icellusedkars@examp-le.com",
+        password: "Password3212",
+      };
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
+            expect.objectContaining({
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 201 - returns a user object if the 'email' has uppercase characters", () => {
+      const loginnedUser = {
+        email: "IcelLusedKars@examp-le.com",
+        password: "Password3212",
+      };
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
+            expect.objectContaining({
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
+            })
+          );
+        });
+    });
+
+    test("POST: 401 - returns an error if the password is incorrect", () => {
+      const loginnedUser = {
+        email: "icellusedkars@examp-le.com",
+        password: "Password423323",
+      };
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(401)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Password is incorrect");
+        });
+    });
+
+    test("POST: 404 - returns an error if the email is not found", () => {
+      const loginnedUser = {
+        email: "icellusedka3232rs@examp-le.com",
+        password: "Password423323",
+      };
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("User Not Found");
+        });
+    });
+
+    test("POST: 400 - returns an error if the user body object misses 'email' and 'password'", () => {
+      const loginnedUser = {};
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid user data");
+        });
+    });
+
+    test("POST: 400 - returns an error if the user body object doesn't have 'password'", () => {
+      const loginnedUser = {
+        email: "icellusedkars@examp-le.com",
+      };
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid user data");
+        });
+    });
+
+    test("POST: 400 - returns an error if the user body object doesn't have 'email'", () => {
+      const loginnedUser = {
+        password: "Password12345",
+      };
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid user data");
+        });
+    });
+
+    test("POST: 400 - returns an error if the user body object has empty 'email' and 'password", () => {
+      const loginnedUser = {
+        email: "",
+        password: "",
+      };
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid user data");
+        });
+    });
+
+    test("POST: 400 - returns an error if the 'email' is not valid", () => {
+      const loginnedUser = {
+        email: "example12334@example",
+        password: "Password12345",
+      };
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid email");
+        });
+    });
+
+    test("POST: 400 - returns an error if the 'password' is not valid", () => {
+      const loginnedUser = {
+        email: "icellusedkars@examp-le.com",
+        password: "password",
+      };
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid password");
+        });
+    });
+
+    test("POST: 400 - returns an error if both 'password' and 'email' are not valid", () => {
+      const loginnedUser = {
+        email: "icellusedkars@examp-le",
+        password: "password",
+      };
+      return request(app)
+        .post("/api/login")
+        .send(loginnedUser)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid email");
         });
     });
   });
