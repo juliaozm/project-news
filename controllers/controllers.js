@@ -129,13 +129,7 @@ const postLoginUser = async (request, response, next) => {
     const user = await fetchUserByEmail(email);
     await checkAndComparePassword(user, password);
     //JWT
-    let tokens = jwtTokens({
-      user: {
-        email: user.email,
-        username: user.username,
-        avatar_url: user.avatar_url,
-      },
-    });
+    let tokens = jwtTokens(user);
     response.cookie("refresh_token", tokens.refreshToken, {
       httpOnly: true,
     });
