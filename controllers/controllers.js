@@ -132,9 +132,10 @@ const postLoginUser = async (request, response, next) => {
     let tokens = jwtTokens(user);
     response
       .cookie("refresh_token", tokens.refreshToken, {
+        ...(process.env.COOKIE_DOMAIN && { domain: process.env.COOKIE_DOMAIN }),
         httpOnly: true,
         sameSite: "none",
-        secure: false,
+        secure: true,
       })
       .status(201)
       .send(tokens);
@@ -157,9 +158,12 @@ const getRefreshToken = (request, response, next) => {
         let tokens = jwtTokens(user);
         response
           .cookie("refresh_token", tokens.refreshToken, {
+            ...(process.env.COOKIE_DOMAIN && {
+              domain: process.env.COOKIE_DOMAIN,
+            }),
             httpOnly: true,
             sameSite: "none",
-            secure: false,
+            secure: true,
           })
           .status(202)
           .send(tokens);
