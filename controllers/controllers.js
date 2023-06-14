@@ -134,6 +134,7 @@ const postLoginUser = async (request, response, next) => {
       .cookie("refresh_token", tokens.refreshToken, {
         httpOnly: true,
         sameSite: "none",
+        secure: false,
       })
       .status(201)
       .send(tokens);
@@ -158,6 +159,7 @@ const getRefreshToken = (request, response, next) => {
           .cookie("refresh_token", tokens.refreshToken, {
             httpOnly: true,
             sameSite: "none",
+            secure: false,
           })
           .status(202)
           .send(tokens);
