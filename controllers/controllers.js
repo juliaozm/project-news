@@ -130,10 +130,12 @@ const postLoginUser = async (request, response, next) => {
     await checkAndComparePassword(user, password);
     //JWT
     let tokens = jwtTokens(user);
-    response.cookie("refresh_token", tokens.refreshToken, {
-      httpOnly: true,
-    });
-    response.status(201).send(tokens);
+    response
+      .cookie("refresh_token", tokens.refreshToken, {
+        httpOnly: true,
+      })
+      .status(201)
+      .send(tokens);
   } catch (error) {
     next(error);
   }
@@ -151,10 +153,12 @@ const getRefreshToken = (request, response, next) => {
       (error, user) => {
         if (error) return response.status(403).json({ error: error.message });
         let tokens = jwtTokens(user);
-        response.cookie("refresh_token", tokens.refreshToken, {
-          httpOnly: true,
-        });
-        response.status(200).send(tokens);
+        response
+          .cookie("refresh_token", tokens.refreshToken, {
+            httpOnly: true,
+          })
+          .status(202)
+          .send(tokens);
       }
     );
   } catch (error) {
