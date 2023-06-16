@@ -3,6 +3,7 @@ const app = require("../app.js");
 const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data/index.js");
 const db = require("../db/connection.js");
+const jwt = require("jsonwebtoken");
 
 beforeEach(() => {
   return seed(testData);
@@ -11,6 +12,22 @@ beforeEach(() => {
 afterAll(() => {
   if (db.end) db.end();
 });
+
+const generateAccessToken = () => {
+  const user = {
+    email: "tickle122@gmail.com",
+    username: "tickle122",
+    avatar_url:
+      "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953",
+  };
+  const accessToken = process.env.ACCESS_TOKEN_SECRET;
+  const options = {
+    expiresIn: "15m",
+  };
+  return jwt.sign(user, accessToken, options);
+};
+
+const accessToken = generateAccessToken();
 
 describe("news-project", () => {
   describe("api/topics", () => {
@@ -246,19 +263,12 @@ describe("news-project", () => {
         .post("/api/users")
         .send(newUser)
         .expect(201)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
             expect.objectContaining({
-              email: expect.any(String),
-              username: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
             })
           );
         });
@@ -274,19 +284,12 @@ describe("news-project", () => {
         .post("/api/users")
         .send(newUser)
         .expect(201)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
             expect.objectContaining({
-              email: expect.any(String),
-              username: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
             })
           );
         });
@@ -302,19 +305,12 @@ describe("news-project", () => {
         .post("/api/users")
         .send(newUser)
         .expect(201)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
             expect.objectContaining({
-              email: expect.any(String),
-              username: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
             })
           );
         });
@@ -330,19 +326,12 @@ describe("news-project", () => {
         .post("/api/users")
         .send(newUser)
         .expect(201)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
             expect.objectContaining({
-              email: expect.any(String),
-              username: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
             })
           );
         });
@@ -358,19 +347,12 @@ describe("news-project", () => {
         .post("/api/users")
         .send(newUser)
         .expect(201)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
             expect.objectContaining({
-              email: expect.any(String),
-              username: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
             })
           );
         });
@@ -386,19 +368,12 @@ describe("news-project", () => {
         .post("/api/users")
         .send(newUser)
         .expect(201)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
             expect.objectContaining({
-              email: expect.any(String),
-              username: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
             })
           );
         });
@@ -414,19 +389,12 @@ describe("news-project", () => {
         .post("/api/users")
         .send(newUser)
         .expect(201)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
             expect.objectContaining({
-              email: expect.any(String),
-              username: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
             })
           );
         });
@@ -442,19 +410,12 @@ describe("news-project", () => {
         .post("/api/users")
         .send(newUser)
         .expect(201)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
             expect.objectContaining({
-              email: expect.any(String),
-              username: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
             })
           );
         });
@@ -470,19 +431,12 @@ describe("news-project", () => {
         .post("/api/users")
         .send(newUser)
         .expect(201)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body).toEqual(
             expect.objectContaining({
-              email: expect.any(String),
-              username: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
+              accessToken: expect.any(String),
+              refreshToken: expect.any(String),
             })
           );
         });
@@ -839,6 +793,7 @@ describe("news-project", () => {
       };
       return request(app)
         .post("/api/articles/1/comments")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(newComment)
         .expect(201)
         .then(({ body: { comment } }) => {
@@ -853,6 +808,7 @@ describe("news-project", () => {
       };
       return request(app)
         .post("/api/articles/1/comments")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(newComment)
         .expect(201)
         .then(({ body: { comment } }) => {
@@ -878,6 +834,7 @@ describe("news-project", () => {
       };
       return request(app)
         .post("/api/articles/1/comments")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(newComment)
         .expect(201)
         .then(({ body: { comment } }) => {
@@ -907,6 +864,7 @@ describe("news-project", () => {
       };
       return request(app)
         .post("/api/articles/1/comments")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(newComment)
         .expect(404)
         .then(({ body: { message } }) => {
@@ -918,6 +876,7 @@ describe("news-project", () => {
       const newComment = {};
       return request(app)
         .post("/api/articles/1/comments")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(newComment)
         .expect(400)
         .then(({ body: { message } }) => {
@@ -931,6 +890,7 @@ describe("news-project", () => {
       };
       return request(app)
         .post("/api/articles/1/comments")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(newComment)
         .expect(400)
         .then(({ body: { message } }) => {
@@ -944,6 +904,7 @@ describe("news-project", () => {
       };
       return request(app)
         .post("/api/articles/1/comments")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(newComment)
         .expect(400)
         .then(({ body: { message } }) => {
@@ -958,6 +919,7 @@ describe("news-project", () => {
       };
       return request(app)
         .post("/api/articles/1/comments")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(newComment)
         .expect(400)
         .then(({ body: { message } }) => {
@@ -972,10 +934,27 @@ describe("news-project", () => {
       };
       return request(app)
         .post("/api/articles/notAnumber/comments")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(newComment)
         .expect(400)
         .then(({ body: { message } }) => {
           expect(message).toBe("Invalid data sent");
+        });
+    });
+
+    test("POST: 401 - returns an error when access token was not passed", () => {
+      const newComment = {
+        username: "icellusedkars",
+        body: "Great comment!",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(401)
+        .then(({ body: { message } }) => {
+          expect(message).toBe(
+            "You aren't authentificated. Please login again"
+          );
         });
     });
   });
@@ -985,6 +964,7 @@ describe("news-project", () => {
       const votes = { inc_votes: 100 };
       return request(app)
         .patch("/api/articles/3")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(votes)
         .expect(200)
         .then(({ body: { article } }) => {
@@ -1012,6 +992,7 @@ describe("news-project", () => {
       };
       return request(app)
         .patch("/api/articles/1")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(votes)
         .expect(200)
         .then(({ body: { article } }) => {
@@ -1035,6 +1016,7 @@ describe("news-project", () => {
       const votes = { inc_votes: 100 };
       return request(app)
         .patch("/api/articles/1")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(votes)
         .expect(200)
         .then(({ body: { article } }) => {
@@ -1051,6 +1033,7 @@ describe("news-project", () => {
       const votes = { inc_votes: -5 };
       return request(app)
         .patch("/api/articles/4")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(votes)
         .expect(200)
         .then(({ body: { article } }) => {
@@ -1067,6 +1050,7 @@ describe("news-project", () => {
       const votes = { inc_votes: 100 };
       return request(app)
         .patch("/api/articles/1000")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(votes)
         .expect(404)
         .then(({ body: { message } }) => {
@@ -1078,6 +1062,7 @@ describe("news-project", () => {
       const votes = { inc_votes: 100 };
       return request(app)
         .patch("/api/articles/notANumber")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(votes)
         .expect(400)
         .then(({ body: { message } }) => {
@@ -1089,6 +1074,7 @@ describe("news-project", () => {
       const votes = {};
       return request(app)
         .patch("/api/articles/notANumber")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(votes)
         .expect(400)
         .then(({ body: { message } }) => {
@@ -1100,10 +1086,24 @@ describe("news-project", () => {
       let votes = { inc_votes: true };
       return request(app)
         .patch("/api/articles/notANumber")
+        .set("Authorization", `Bearer ${accessToken}`)
         .send(votes)
         .expect(400)
         .then(({ body: { message } }) => {
           expect(message).toBe("Bad Request");
+        });
+    });
+
+    test("PATCH: 401 - responses with error when access token is not passed", () => {
+      const votes = { inc_votes: -5 };
+      return request(app)
+        .patch("/api/articles/4")
+        .send(votes)
+        .expect(401)
+        .then(({ body: { message } }) => {
+          expect(message).toBe(
+            "You aren't authentificated. Please login again"
+          );
         });
     });
   });
@@ -1112,6 +1112,7 @@ describe("news-project", () => {
     test("GET: 200 - a get request should response with an array of user objects", () => {
       return request(app)
         .get("/api/users")
+        .set("Authorization", `Bearer ${accessToken}`)
         .expect(200)
         .then(({ body: { users } }) => {
           expect(users).toBeInstanceOf(Array);
@@ -1125,6 +1126,7 @@ describe("news-project", () => {
     test("GET: 200 - a get request should response with an array of objects with following properties", () => {
       return request(app)
         .get("/api/users")
+        .set("Authorization", `Bearer ${accessToken}`)
         .expect(200)
         .then(({ body: { users } }) => {
           users.forEach((user) => {
@@ -1144,6 +1146,17 @@ describe("news-project", () => {
           });
         });
     });
+
+    test("GET: 401 - a get request should return error when access token is not passed", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(401)
+        .then(({ body: { message } }) => {
+          expect(message).toBe(
+            "You aren't authentificated. Please login again"
+          );
+        });
+    });
   });
 
   describe("GET: /api/users/:email", () => {
@@ -1152,108 +1165,57 @@ describe("news-project", () => {
       return request(app)
         .get(`/api/users/${email}`)
         .expect(200)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
-            expect.objectContaining({
-              username: expect.any(String),
-              email: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
-            })
-          );
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body.status).toBe(true);
+          expect(body.message).toBe(`${email} exists`);
         });
     });
 
     test("GET: 200 - a get request should return a user object if the validator trims leading and trailing whitespaces", () => {
+      const email = " butter_bridge@gmail.com ";
       return request(app)
-        .get("/api/users/ butter_bridge@gmail.com ")
+        .get(`/api/users/${email}`)
         .expect(200)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
-            expect.objectContaining({
-              username: expect.any(String),
-              email: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
-            })
-          );
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body.status).toBe(true);
+          expect(body.message).toBe(`${email.trim()} exists`);
         });
     });
 
     test("GET: 200 - returns a user object a message if special characters, such as hyphens, underscores, or dots are in the email address", () => {
+      const email = "an.ony-mo_us@gmail.com";
       return request(app)
-        .get("/api/users/an.ony-mo_us@gmail.com")
+        .get(`/api/users/${email}`)
         .expect(200)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
-            expect.objectContaining({
-              username: expect.any(String),
-              email: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
-            })
-          );
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body.status).toBe(true);
+          expect(body.message).toBe(`${email.trim()} exists`);
         });
     });
     test("GET: 200 - returns a user object a message if underscore and dots are in domain of the email address", () => {
+      const email = "icellusedkars@examp-le.com";
       return request(app)
-        .get("/api/users/icellusedkars@examp-le.com")
+        .get(`/api/users/${email}`)
         .expect(200)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
-            expect.objectContaining({
-              username: expect.any(String),
-              email: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
-            })
-          );
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body.status).toBe(true);
+          expect(body.message).toBe(`${email.trim()} exists`);
         });
     });
 
     test("GET: 200 - returns a user object a message with subdomain in the email address", () => {
+      const email = "example@subdomain.example.com";
       return request(app)
-        .get("/api/users/example@subdomain.example.com")
+        .get(`/api/users/${email}`)
         .expect(200)
-        .then(({ body: { user } }) => {
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toEqual(
-            expect.objectContaining({
-              username: expect.any(String),
-              email: expect.any(String),
-              avatar_url: expect.any(String),
-            })
-          );
-          expect(user).not.toEqual(
-            expect.objectContaining({
-              password: expect.any(String),
-              user_id: expect.any(String),
-            })
-          );
+        .then(({ body }) => {
+          expect(body).toBeInstanceOf(Object);
+          expect(body.status).toBe(true);
+          expect(body.message).toBe(`${email.trim()} exists`);
         });
     });
 
@@ -1419,12 +1381,16 @@ describe("news-project", () => {
 
   describe("DELETE: /api/comments/:comment_id", () => {
     test('DELETE: 204 - status 204 and no content if "comment_id" exists', () => {
-      return request(app).delete("/api/comments/1").expect(204);
+      return request(app)
+        .delete("/api/comments/1")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .expect(204);
     });
 
     test('DELETE: 404 - returns a message "Not Found" if "comment_id" does not exist in the database', () => {
       return request(app)
         .delete("/api/comments/1000")
+        .set("Authorization", `Bearer ${accessToken}`)
         .expect(404)
         .then(({ body: { message } }) => {
           expect(message).toBe("Not Found");
@@ -1434,9 +1400,21 @@ describe("news-project", () => {
     test('DELETE: 400 - returns a message "Bad Request" if invalid "comment_id" was passed', () => {
       return request(app)
         .delete("/api/comments/notAnumber")
+        .set("Authorization", `Bearer ${accessToken}`)
         .expect(400)
         .then(({ body: { message } }) => {
           expect(message).toBe("Bad Request");
+        });
+    });
+
+    test("DELETE: 401 - returns error when access token was not passed", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(401)
+        .then(({ body: { message } }) => {
+          expect(message).toBe(
+            "You aren't authentificated. Please login again"
+          );
         });
     });
   });

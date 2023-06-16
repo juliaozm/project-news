@@ -5,7 +5,7 @@ const {
   getTopics,
   getArticles,
   getUsers,
-  getUserByEmail,
+  checkUserByEmail,
   getArticleById,
   getCommentsByArticleId,
   postCommentByArticleId,
@@ -18,7 +18,9 @@ const {
   deleteRefreshToken,
 } = require("./controllers/controllers.js");
 const cookieParser = require("cookie-parser");
+const authToken = require("./middleware/auth.js");
 const originDomain = process.env.ORIGIN_DOMAIN;
+
 app.use(cors({ credentials: true, origin: originDomain }));
 app.use(express.json());
 app.use(cookieParser());
@@ -28,15 +30,19 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
-app.post("/api/articles/:article_id/comments", postCommentByArticleId);
-app.patch("/api/articles/:article_id", updateArticle);
-app.get("/api/users", getUsers);
-app.get("/api/users/:email", getUserByEmail);
+app.post(
+  "/api/articles/:article_id/comments",
+  authToken,
+  postCommentByArticleId
+);
+app.patch("/api/articles/:article_id", authToken, updateArticle);
+app.delete("/api/comments/:comment_id", authToken, deleteCommentById);
+app.get("/api/users", authToken, getUsers);
+app.get("/api/users/:email", checkUserByEmail);
 app.post("/api/users", postNewUser);
-app.delete("/api/comments/:comment_id", deleteCommentById);
 app.post("/api/login", postLoginUser);
 app.get("/api/refresh_token", getRefreshToken);
-app.delete("/api/refresh_token", deleteRefreshToken);
+app.delete("/api/refresh_token", authToken, deleteRefreshToken);
 
 app.use((err, request, response, next) => {
   if (err.status && err.message) {
