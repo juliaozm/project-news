@@ -86,22 +86,29 @@ const postNewUser = (request, response, next) => {
   const newUser = request.body;
   addNewUser(newUser)
     .then((user) => {
-      response.status(201).send({ user });
+      let tokens = jwtTokens(user);
+      response
+        .cookie("refresh_token", tokens.refreshToken, {
+          ...(process.env.COOKIE_DOMAIN && {
+            domain: process.env.COOKIE_DOMAIN,
+          }),
+          httpOnly: true,
+          sameSite: "none",
+          secure: true,
+        })
+        .status(201)
+        .send(tokens);
     })
     .catch((err) => next(err));
 };
 
-const getUserByEmail = (request, response, next) => {
+const checkUserByEmail = (request, response, next) => {
   const { email } = request.params;
   fetchUserByEmail(email)
     .then((user) => {
-      response.status(200).send({
-        user: {
-          email: user.email,
-          username: user.username,
-          avatar_url: user.avatar_url,
-        },
-      });
+      response
+        .status(200)
+        .send({ status: true, message: `${user.email} exists` });
     })
     .catch((err) => next(err));
 };
@@ -148,13 +155,15 @@ const getRefreshToken = (request, response, next) => {
   try {
     const refreshToken = request.cookies.refresh_token;
     if (refreshToken == null) {
-      return response.status(401).send({ error: "Null refresh token" });
+      return response
+        .status(401)
+        .send({ message: "You aren't authentificated. Please login again" });
     }
     jwt.verify(
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET,
       (error, user) => {
-        if (error) return response.status(403).json({ error: error.message });
+        if (error) return response.status(403).json({ message: error.message });
         let tokens = jwtTokens(user);
         response
           .cookie("refresh_token", tokens.refreshToken, {
@@ -170,7 +179,7 @@ const getRefreshToken = (request, response, next) => {
       }
     );
   } catch (error) {
-    response.status(401).send({ error: error.message });
+    response.status(401).send({ message: error.message });
   }
 };
 
@@ -179,7 +188,7 @@ const deleteRefreshToken = (request, response, next) => {
     response.clearCookie("refresh_token");
     return response.status(200).send({ message: "Refresh token deleted" });
   } catch (error) {
-    response.status(401).send({ error: error.message });
+    response.status(401).send({ message: error.message });
   }
 };
 
@@ -192,7 +201,7 @@ module.exports = {
   updateArticle,
   postNewUser,
   getUsers,
-  getUserByEmail,
+  checkUserByEmail,
   deleteCommentById,
   getAllEndpoints,
   postLoginUser,
