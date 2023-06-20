@@ -961,7 +961,7 @@ describe("news-project", () => {
 
   describe("PATCH: /api/articles/:article_id", () => {
     test("PATCH: 200 - responses with an article object when passed a valid request body", () => {
-      const votes = { inc_votes: 100 };
+      const votes = { inc_votes: +100 };
       return request(app)
         .patch("/api/articles/3")
         .set("Authorization", `Bearer ${accessToken}`)
@@ -986,7 +986,7 @@ describe("news-project", () => {
 
     test("PATCH: 200 - responses with an article object that ignores any additional keys passed in a request body", () => {
       const votes = {
-        inc_votes: 100,
+        inc_votes: -100,
         author_reputation: "good",
         comments: 3,
       };
@@ -1058,7 +1058,7 @@ describe("news-project", () => {
         });
     });
 
-    test('PATCH: 400 - returns a message "Bad Request" when invalid "article_id" is passed', () => {
+    test('PATCH: 400 - returns error when invalid "article_id" is passed', () => {
       const votes = { inc_votes: 100 };
       return request(app)
         .patch("/api/articles/notANumber")
@@ -1066,31 +1066,31 @@ describe("news-project", () => {
         .send(votes)
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("Bad Request");
+          expect(message).toBe("Bad article_id");
         });
     });
 
-    test('PATCH: 400 - returns a message "Bad Request" when request body is empty', () => {
+    test("PATCH: 400 - returns error when request body is empty", () => {
       const votes = {};
       return request(app)
-        .patch("/api/articles/notANumber")
+        .patch("/api/articles/1")
         .set("Authorization", `Bearer ${accessToken}`)
         .send(votes)
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("Bad Request");
+          expect(message).toBe("Invalid article votes");
         });
     });
 
-    test('PATCH: 400 - returns a message "Bad Request" when "inc_votes" property is not a number', () => {
-      let votes = { inc_votes: true };
+    test('PATCH: 400 - returns error when "inc_votes" property is not a number', () => {
+      let votes = { inc_votes: {} };
       return request(app)
-        .patch("/api/articles/notANumber")
+        .patch("/api/articles/1")
         .set("Authorization", `Bearer ${accessToken}`)
         .send(votes)
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("Bad Request");
+          expect(message).toBe("Invalid article votes");
         });
     });
 
@@ -1098,6 +1098,151 @@ describe("news-project", () => {
       const votes = { inc_votes: -5 };
       return request(app)
         .patch("/api/articles/4")
+        .send(votes)
+        .expect(401)
+        .then(({ body: { message } }) => {
+          expect(message).toBe(
+            "You aren't authentificated. Please login again"
+          );
+        });
+    });
+  });
+
+  describe("PATCH: /api/comments/:comment_id", () => {
+    test("PATCH: 200 - responses with a comment object when passed a valid request body", () => {
+      const votes = { inc_votes: +1 };
+      return request(app)
+        .patch("/api/comments/3")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(votes)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toBeInstanceOf(Object);
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              author: expect.any(String),
+              article_id: expect.any(Number),
+              body: expect.any(String),
+              created_at: expect.any(Number),
+            })
+          );
+        });
+    });
+
+    test("PATCH: 200 - responses with a comment object that ignores any additional keys passed in a request body", () => {
+      const votes = {
+        inc_votes: -100,
+        author_reputation: "good",
+        comments: 3,
+      };
+      return request(app)
+        .patch("/api/comments/1")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(votes)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toBeInstanceOf(Object);
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              author: expect.any(String),
+              article_id: expect.any(Number),
+              body: expect.any(String),
+              created_at: expect.any(Number),
+            })
+          );
+        });
+    });
+
+    test('PATCH: 200 - responses with a comment object where "inc_votes" property increased by 100', () => {
+      const votes = { inc_votes: 100 };
+      return request(app)
+        .patch("/api/comments/1")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(votes)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              votes: 116,
+            })
+          );
+        });
+    });
+
+    test('PATCH: 200 - responses with an article object where "inc_votes" property decreased by 26', () => {
+      const votes = { inc_votes: -26 };
+      return request(app)
+        .patch("/api/comments/1")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(votes)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              votes: -10,
+            })
+          );
+        });
+    });
+
+    test('PATCH: 404 - returns a message "This comment does not exist" when "comment_id" not found in the database', () => {
+      const votes = { inc_votes: +1 };
+      return request(app)
+        .patch("/api/comments/1000")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(votes)
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("This comment does not exist");
+        });
+    });
+
+    test('PATCH: 400 - returns error when invalid "comment_id" is passed', () => {
+      const votes = { inc_votes: 100 };
+      return request(app)
+        .patch("/api/comments/notANumber")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(votes)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Bad comment_id");
+        });
+    });
+
+    test("PATCH: 400 - returns error when request body is empty", () => {
+      const votes = {};
+      return request(app)
+        .patch("/api/comments/1")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(votes)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid comment votes");
+        });
+    });
+
+    test('PATCH: 400 - returns error when "inc_votes" property is not a number', () => {
+      let votes = { inc_votes: "true" };
+      return request(app)
+        .patch("/api/comments/1")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(votes)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid comment votes");
+        });
+    });
+
+    test("PATCH: 401 - responses with error when access token is not passed", () => {
+      const votes = { inc_votes: -5 };
+      return request(app)
+        .patch("/api/comments/4")
         .send(votes)
         .expect(401)
         .then(({ body: { message } }) => {

@@ -9,6 +9,7 @@ const {
   fetchCommentsByArticleId,
   addNewComment,
   addNewUser,
+  changeVotesOnComment,
   changeVotesOnArticle,
   deleteComment,
   fetchEndpoints,
@@ -64,10 +65,20 @@ const postCommentByArticleId = (request, response, next) => {
     .catch((err) => next(err));
 };
 
+const updateComment = (request, response, next) => {
+  const { comment_id } = request.params;
+  const votes = request.body;
+  changeVotesOnComment(votes, +comment_id)
+    .then((comment) => {
+      response.status(200).send({ comment });
+    })
+    .catch((err) => next(err));
+};
+
 const updateArticle = (request, response, next) => {
   const { article_id } = request.params;
-  const { inc_votes } = request.body;
-  changeVotesOnArticle(inc_votes, article_id)
+  const votes = request.body;
+  changeVotesOnArticle(votes, +article_id)
     .then((article) => {
       response.status(200).send({ article });
     })
@@ -199,6 +210,7 @@ module.exports = {
   getCommentsByArticleId,
   postCommentByArticleId,
   updateArticle,
+  updateComment,
   postNewUser,
   getUsers,
   checkUserByEmail,

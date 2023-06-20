@@ -211,9 +211,50 @@ const addNewComment = (article_id, newCommentData) => {
     });
 };
 
-const changeVotesOnArticle = (inc_votes, article_id) => {
-  if (!inc_votes || typeof inc_votes !== "number") {
-    return Promise.reject({ status: 400, message: "Bad Request" });
+const changeVotesOnComment = (votes, comment_id) => {
+  if (!comment_id || typeof comment_id !== "number") {
+    return Promise.reject({ status: 400, message: "Bad comment_id" });
+  }
+
+  if (
+    !votes.inc_votes ||
+    typeof votes.inc_votes !== "number" ||
+    !Object.keys(votes).length
+  ) {
+    return Promise.reject({ status: 400, message: "Invalid comment votes" });
+  }
+  const sqlString = `
+    UPDATE comments
+    SET votes = votes + $1
+    WHERE comment_id = $2
+    RETURNING *;
+  `;
+  return db
+    .query(sqlString, [votes.inc_votes, comment_id])
+    .then(({ rowCount, rows }) => {
+      if (rowCount === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "This comment does not exist",
+        });
+      } else {
+        let [comment] = rows;
+        comment.created_at = Date.parse(comment.created_at);
+        return comment;
+      }
+    });
+};
+
+const changeVotesOnArticle = (votes, article_id) => {
+  if (!article_id || typeof article_id !== "number") {
+    return Promise.reject({ status: 400, message: "Bad article_id" });
+  }
+  if (
+    !votes.inc_votes ||
+    typeof votes.inc_votes !== "number" ||
+    !Object.keys(votes).length
+  ) {
+    return Promise.reject({ status: 400, message: "Invalid article votes" });
   }
   const sqlString = `
         UPDATE articles
@@ -222,7 +263,7 @@ const changeVotesOnArticle = (inc_votes, article_id) => {
         RETURNING *;
     `;
   return db
-    .query(sqlString, [inc_votes, article_id])
+    .query(sqlString, [votes.inc_votes, article_id])
     .then(({ rowCount, rows }) => {
       if (rowCount === 0) {
         return Promise.reject({
@@ -378,6 +419,7 @@ module.exports = {
   fetchCommentsByArticleId,
   addNewComment,
   addNewUser,
+  changeVotesOnComment,
   changeVotesOnArticle,
   deleteComment,
   fetchEndpoints,
