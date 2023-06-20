@@ -11,6 +11,7 @@ const {
   postCommentByArticleId,
   postNewUser,
   updateArticle,
+  updateComment,
   deleteCommentById,
   getAllEndpoints,
   postLoginUser,
@@ -35,6 +36,7 @@ app.post(
   authToken,
   postCommentByArticleId
 );
+app.patch("/api/comments/:comment_id", authToken, updateComment);
 app.patch("/api/articles/:article_id", authToken, updateArticle);
 app.delete("/api/comments/:comment_id", authToken, deleteCommentById);
 app.get("/api/users", authToken, getUsers);
