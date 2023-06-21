@@ -59,6 +59,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         body VARCHAR NOT NULL,
         article_id INT REFERENCES articles(article_id) NOT NULL,
         author VARCHAR NOT NULL,
+        avatar_url VARCHAR DEFAULT 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
         votes INT DEFAULT 0 NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
       );`);
@@ -107,11 +108,12 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       const formattedCommentData = formatComments(commentData, articleIdLookup);
 
       const insertCommentsQueryStr = format(
-        "INSERT INTO comments (body, author, article_id, votes, created_at) VALUES %L;",
+        "INSERT INTO comments (body, author, avatar_url, article_id, votes, created_at) VALUES %L;",
         formattedCommentData.map(
-          ({ body, email, author, article_id, votes = 0, created_at }) => [
+          ({ body, author, avatar_url, article_id, votes = 0, created_at }) => [
             body,
             author,
+            avatar_url,
             article_id,
             votes,
             created_at,
