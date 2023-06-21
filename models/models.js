@@ -191,9 +191,9 @@ const addNewComment = (article_id, newCommentData) => {
       const created_at = new Date();
       const commentString = `
             INSERT INTO comments
-                (article_id, author, body, votes, created_at)
+                (article_id, author, body, avatar_url, votes, created_at)
             VALUES
-                ($1, $2, $3, $4, $5)
+                ($1, $2, $3, $4, $5, $6)
             RETURNING *;
         `;
       return db
@@ -201,6 +201,7 @@ const addNewComment = (article_id, newCommentData) => {
           article_id,
           user.username,
           body,
+          user.avatar_url,
           votes,
           created_at,
         ])

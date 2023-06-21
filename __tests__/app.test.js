@@ -202,6 +202,7 @@ describe("news-project", () => {
                 votes: expect.any(Number),
                 created_at: expect.any(String),
                 author: expect.any(String),
+                avatar_url: expect.any(String),
                 body: expect.any(String),
                 article_id: expect.any(Number),
               })
@@ -815,8 +816,9 @@ describe("news-project", () => {
           expect(comment).toEqual(
             expect.objectContaining({
               article_id: expect.any(Number),
-              author: expect.any(String),
-              body: expect.any(String),
+              author: "icellusedkars",
+              avatar_url: expect.any(String),
+              body: "Great comment!",
               votes: expect.any(Number),
               created_at: expect.any(Number),
             })
@@ -841,8 +843,9 @@ describe("news-project", () => {
           expect(comment).toEqual(
             expect.objectContaining({
               article_id: expect.any(Number),
-              author: expect.any(String),
-              body: expect.any(String),
+              author: "icellusedkars",
+              body: "Great comment!",
+              avatar_url: expect.any(String),
               votes: expect.any(Number),
               created_at: expect.any(Number),
             })
@@ -1123,6 +1126,7 @@ describe("news-project", () => {
               comment_id: expect.any(Number),
               votes: expect.any(Number),
               author: expect.any(String),
+              avatar_url: expect.any(String),
               article_id: expect.any(Number),
               body: expect.any(String),
               created_at: expect.any(Number),
@@ -1149,9 +1153,16 @@ describe("news-project", () => {
               comment_id: expect.any(Number),
               votes: expect.any(Number),
               author: expect.any(String),
+              avatar_url: expect.any(String),
               article_id: expect.any(Number),
               body: expect.any(String),
               created_at: expect.any(Number),
+            })
+          );
+          expect(comment).not.toEqual(
+            expect.objectContaining({
+              author_reputation: "good",
+              comments: 3,
             })
           );
         });
