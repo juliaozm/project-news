@@ -33,26 +33,34 @@ The NC-News API was built using the following technologies and tools:
 To get started with the NC-News API, follow these steps:
 
 1. Clone the repository and navigate to the project directory:
-   `git clone https://github.com/juliaozm/project-news.git`
-   `cd project-news`
+   ```
+   git clone https://github.com/juliaozm/project-news.git
+   ```
+   ```
+   cd project-news
+   ```
 
-2. Install the required dependencies:
-   `npm install`
+3. Install the required dependencies:
+   ```
+   npm install
+   ```
 
-3. Configure the connection in the .env file: Create `.env.test` and `.env.development` in the root folder. In .env files add `PGDATABASE=nc_news_test` and `PGDATABASE=nc_news` respectively
+5. Configure the connection in the .env file: Create `.env.test` and `.env.development` in the root folder. In .env files add `PGDATABASE=nc_news_test` and `PGDATABASE=nc_news` respectively
 
-4. Set up the PostgreSQL databases:
-   `npm run setup-dbs`
+6. Set up the PostgreSQL databases:
+   ```
+   npm run setup-dbs
+   ```
 
-5. Seed databases with the initial data:
-   `npm run seed`
+8. Seed databases with the initial data:
+   ```
+   npm run seed
+   ```
 
-6. Start the server:
-   `npm start`
-
-7. Run tests:
-   `cd __tests__`
-   `npm test`
+10. Start the server on the default port 9090:
+     ```
+     npm start
+     ```
 
 ## Authentication
 
@@ -63,7 +71,7 @@ An **access token** is obtained upon successful authentication (e.g., `POST api/
 To include the access token in the API requests protected with JWT, you need to send it in the **Authorization HTTP header** as follows:
 `Authorization: Bearer {accessToken}`
 
-A **refresh token** is used to obtain a new access token, by making an API call to the refresh token endpoint (e.g., `GET /api/refresh_token`). It has a longer expiration time of `15min`. If the refresh token is valid, the server will respond with a new access token. If the refresh token is invalid or expired, you will receive a `401 - Unauthorized` HTTP error and the user must be prompted to log in again.
+A **refresh token** is used to obtain a new access token, by making an API call to the refresh token endpoint (e.g., `GET /api/refresh_token`). It has a longer expiration time of `15min`. If the refresh token is valid, the server will respond with a new access token. If the refresh token is invalid or expired, you will receive `401 Unauthorized` or `403 Forbidden` HTTP errors and the user must be prompted to log in again.
 
 To ask the server to invalidate all tokens associated with a particular user, you can delete refresh token (e.g.`DELETE api/refresh_token`)
 
@@ -74,7 +82,7 @@ The body must have:
 - `email`: Valid email address must match existed user's email
 - `password`: Valid password associated with the user
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/login`
+##### Example request: `http://localhost:9090/api/login`
 
 ```
 {
@@ -101,7 +109,7 @@ The `accessToken` contains the `username`, `email` and `avatar_url` of the user
 
 Protected with JWT: `true`
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/refresh_token`
+##### Example request: `http://localhost:9090/api/refresh_token`
 
 It returns the following:
 
@@ -111,7 +119,6 @@ status: 200 OK
 {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCeyJlbWFpbCI6ImFuZHJlX2FuZDhAZ21haWwuY29tIiwidXNlcm5hbWUiOiJhbmRyZV85MzIzIiwiYXZhdGFyX3VybCI6Imh0dHBzOi8vd3d3LmdyYXZhdGFyLmNvbS9hdmF0YXIvMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA_ZD1tcCZmPXkiLCJpYXQiOjE2ODg1MTYzNzYsImV4cCI6MTY4ODUxNjQwNn0.\_Qc0Xg2qCrpU2Exom5eVHpoN9W9ME_OKIzJM9RFgl8M"
 }
-
 ```
 
 <br />
@@ -120,18 +127,16 @@ status: 200 OK
 
 Protected with JWT: `true`
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/refresh_token`
+##### Example request: `http://localhost:9090/api/refresh_token`
 
 It returns the following:
 
 ```
 status: 204 No Content
-
 ```
 
 ## Available Endpoints
-
-All the available API endpoints are deployed at `https://julia-ozmitel-backend-project.onrender.com/api`
+You can use **Insomnia** or **REST Client** extension in VSCode to send HTTP requests to a server running on `localhost:9090` and interact with the server's API endpoints. Also all the available API endpoints are deployed at [onRender.com](https://julia-ozmitel-backend-project.onrender.com/api) and are ready to be utilized directly in other front-end projects.
 
 ### 1. Topics
 
@@ -139,7 +144,7 @@ All the available API endpoints are deployed at `https://julia-ozmitel-backend-p
 
 To retrive all the topics from the database. Protected with JWT: `false`
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/topics`
+##### Example request: `http://localhost:9090/api/topics`
 
 <details>
 <summary>Show response: An array of all the topics </summary>
@@ -183,7 +188,7 @@ To retrive all the articles from the database. Protected with JWT: `false`
 | `page`    | From 1 to available integer      | 1       |
 | `limit`   | 6, 10, 24                        | 6       |
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/articles?topic=coding&sort_by=votes&order=desc&limit=6&page=1`
+##### Example request: `http://localhost:9090/api/articles?topic=coding&sort_by=votes&order=desc&limit=6&page=1`
 
 <details>
 <summary>Show response: An array of the articles depends on the queries </summary>
@@ -276,7 +281,7 @@ To retrive a particular article from the database. Protected with JWT: `false`
 | ---------- | ---------------------------------- | ------- |
 | article_id | Integer must match existed article | 3       |
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/articles/3`
+##### Example request: `http://localhost:9090/api/articles/3`
 
 <details>
 <summary>Show response: An article object</summary>
@@ -315,7 +320,7 @@ The body must have:
 
 - `inc_votes`: Positive or negative integer
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/articles/3`
+##### Example request: `http://localhost:9090/api/articles/3`
 
 ```
 {
@@ -359,7 +364,7 @@ To retrieve all the comments associated with a particular article. Protected wit
 | ---------- | ---------------------------------- | ------- |
 | article_id | Integer must match existed article | 3       |
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/articles/3/comments`
+##### Example request: `http://localhost:9090/api/articles/3/comments`
 
 <details>
 <summary>Show response: An array of comments</summary>
@@ -480,7 +485,7 @@ The body must have:
 - `username`: Must match existed user's username
 - `body`: Any string
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/articles/3/comments`
+##### Example request: `http://localhost:9090/api/articles/3/comments`
 
 ```
 {
@@ -522,13 +527,12 @@ The body must have:
 
 - `inc_votes`: Positive or negative integer
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/comments/125`
+##### Example request: `http://localhost:9090/api/comments/125`
 
 ```
 {
     "inc_votes": -100
 }
-
 ```
 
 <details>
@@ -560,13 +564,12 @@ To delete a particular comment. Protected with JWT: `true`
 | ---------- | ---------------------------------- | ------- |
 | comment_id | Integer must match existed comment | 125     |
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/comments/125`
+##### Example request: `http://localhost:9090/api/comments/125`
 
 It returns the following:
 
 ```
 status: 204 No Content
-
 ```
 
 <br />
@@ -577,7 +580,7 @@ status: 204 No Content
 
 To retrieve all the users from the database. Protected with JWT: `true`
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/users`
+##### Example request: `http://localhost:9090/api/users`
 
 <details>
 <summary>Show response: An array of all users</summary>
@@ -634,7 +637,7 @@ To check if the user exists with a particular email in the database. Protected w
 | ------ | ------------------- |
 | email  | Valid email address |
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/users/cooljmessy@gmail.com`
+##### Example request: `http://localhost:9090/api/users/cooljmessy@gmail.com`
 
 It returns the following:
 
@@ -645,7 +648,6 @@ status: 200 OK
     "status": true,
     "message": "cooljmessy@gmail.com exists"
 }
-
 ```
 
 <br />
@@ -660,7 +662,7 @@ The body must contain:
 - `username`: Unique string contains lowercase characters, number and underscore,
 - `password`: Valid password
 
-##### Example request: `https://julia-ozmitel-backend-project.onrender.com/api/users`
+##### Example request: `http://localhost:9090/api/users`
 
 ```
 {
@@ -668,7 +670,6 @@ The body must contain:
     "email": "andre_and8@gmail.com",
     "password" : "Calculation12412!"`
 }
-
 ```
 
 It returns the following:
@@ -679,7 +680,6 @@ status: 201 Created
 {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJlbWFpbCI6ImFuZHJlX2FuZDhAZ21haWwuY29tIiwidXNlcm5hbWUiOiJhbmRyZV85MzIzIiwiYXZhdGFyX3VybCI6Imh0dHBzOi8vd3d3LmdyYXZhdGFyLmNvbS9hdmF0YXIvMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA_ZD1tcCZmPXkiLCJpYXQiOjE2ODg1MTYwMzUsImV4cCI6MTY4ODUxNjA2NX0.Ja14wMnUc6MLfrQKwlshzu1GYOilggjt42RSPbOhHDI"
 }
-
 ```
 
 The `accessToken` contains the `username`, `email` and `avatar_url` of the user
