@@ -4,7 +4,7 @@
 
 The NC-News API is a RESTful HTTP API designed to provide information about users, topics, articles, and comments to a front-end architecture. It was implemented as a back-end project during my studies at Northcoders coding bootcamp. 
 
-This API is deployed at [NC-News Back-End API](https://julia-ozmitel-backend-project.onrender.com/api) and is utilized in my front-end project here [NC-News Front-End App](https://github.com/juliaozm/nc-news)
+This API is deployed at [NC-News Back-End API](https://julia-ozmitel-backend-project.onrender.com/api) and is utilized in my front-end project here [NC-News Front-End App](https://juliaozm.netlify.app/)
 
 ## Key Features
 
