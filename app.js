@@ -43,7 +43,7 @@ app.get("/api/users", authToken, getUsers);
 app.get("/api/users/:email", checkUserByEmail);
 app.post("/api/users", postNewUser);
 app.post("/api/login", postLoginUser);
-app.get("/api/refresh_token", getRefreshToken);
+app.get("/api/refresh_token", authToken, getRefreshToken);
 app.delete("/api/refresh_token", authToken, deleteRefreshToken);
 
 app.use((err, request, response, next) => {
