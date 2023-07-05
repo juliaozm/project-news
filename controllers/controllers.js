@@ -108,7 +108,7 @@ const postNewUser = (request, response, next) => {
           secure: true,
         })
         .status(201)
-        .send(tokens);
+        .send({ accessToken: tokens.accessToken });
     })
     .catch((err) => next(err));
 };
@@ -156,7 +156,7 @@ const postLoginUser = async (request, response, next) => {
         secure: true,
       })
       .status(201)
-      .send(tokens);
+      .send({ accessToken: tokens.accessToken });
   } catch (error) {
     next(error);
   }
@@ -186,7 +186,7 @@ const getRefreshToken = (request, response, next) => {
             secure: true,
           })
           .status(202)
-          .send(tokens);
+          .send({ accessToken: tokens.accessToken });
       }
     );
   } catch (error) {
