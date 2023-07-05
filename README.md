@@ -4,7 +4,7 @@
 
 The NC-News API is a RESTful HTTP API designed to provide information about users, topics, articles, and comments to a front-end architecture. It was implemented as a back-end project during my studies at Northcoders coding bootcamp.
 
-The front-end project is here `https://github.com/juliaozm/nc-news`
+The front-end project is here: [NC-News Front-End](https://github.com/juliaozm/nc-news)
 
 ## Key Features
 
@@ -67,7 +67,7 @@ A **refresh token** is used to obtain a new access token, by making an API call 
 
 To ask the server to invalidate all tokens associated with a particular user, you can delete refresh token (e.g.`DELETE api/refresh_token`)
 
-#### POST `api/login`
+#### `POST api/login`
 
 The body must have:
 
@@ -97,7 +97,7 @@ The `accessToken` contains the `username`, `email` and `avatar_url` of the user
 
 <br />
 
-### `GET api/refresh_token`
+#### `GET api/refresh_token`
 
 Protected with JWT: `true`
 
@@ -116,7 +116,7 @@ status: 200 OK
 
 <br />
 
-### `DELETE api/refresh_token`
+#### `DELETE api/refresh_token`
 
 Protected with JWT: `true`
 
