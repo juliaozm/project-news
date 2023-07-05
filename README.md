@@ -2,9 +2,9 @@
 
 ## Introduction
 
-The NC-News API is a RESTful HTTP API designed to provide information about users, topics, articles, and comments to a front-end architecture. It was implemented as a back-end project during my studies at Northcoders coding bootcamp.
+The NC-News API is a RESTful HTTP API designed to provide information about users, topics, articles, and comments to a front-end architecture. It was implemented as a back-end project during my studies at Northcoders coding bootcamp. 
 
-The front-end project is here: [NC-News Front-End](https://github.com/juliaozm/nc-news)
+This API is deployed at [NC-News Back-End API](https://julia-ozmitel-backend-project.onrender.com/api) and is utilized in my front-end project here [NC-News Front-End App](https://github.com/juliaozm/nc-news)
 
 ## Key Features
 
@@ -61,6 +61,7 @@ To get started with the NC-News API, follow these steps:
      ```
      npm start
      ```
+To interact with the server's API endpoints, you can use **REST Client** extension in VSCode to send HTTP requests to a server running on `localhost:9090` or the deployed APIs at [onRender.com](https://julia-ozmitel-backend-project.onrender.com/api).
 
 ## Authentication
 
@@ -136,7 +137,6 @@ status: 204 No Content
 ```
 
 ## Available Endpoints
-You can use **Insomnia** or **REST Client** extension in VSCode to send HTTP requests to a server running on `localhost:9090` and interact with the server's API endpoints. Also all the available API endpoints are deployed at [onRender.com](https://julia-ozmitel-backend-project.onrender.com/api) and are ready to be utilized directly in other front-end projects.
 
 ### 1. Topics
 
@@ -683,3 +683,6 @@ status: 201 Created
 ```
 
 The `accessToken` contains the `username`, `email` and `avatar_url` of the user
+
+## Created by
+#### [GitHub @juliaozm](github.com/juliaozm)
