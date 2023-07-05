@@ -4,6 +4,8 @@
 
 The NC-News API is a RESTful HTTP API designed to provide information about users, topics, articles, and comments to a front-end architecture. It was implemented as a back-end project during my studies at Northcoders coding bootcamp.
 
+The front-end project is here `https://github.com/juliaozm/nc-news`
+
 ## Key Features
 
 The NC-News API offers the following key features:
@@ -21,7 +23,7 @@ The NC-News API was built using the following technologies and tools:
 - Node.js and Express.js for building API
 - PostgreSQL database for storing and managing data
 - Pg-format for formatting queries in PostgreSQL
-- Jest and Supertest for testing the API endpoints functionality
+- Jest and Supertest for building API endpoints functionality using TDD approach
 - Bcrypt for password hashing and authentication
 - JSON Web Tokens for user authentication and authorization
 - Dotenv for configuring sensitive information as database credentials, API keys
@@ -30,19 +32,27 @@ The NC-News API was built using the following technologies and tools:
 
 To get started with the NC-News API, follow these steps:
 
-1. Clone the repository and navigate to the project directory: `git clone https://github.com/juliaozm/project-news.git`
+1. Clone the repository and navigate to the project directory:
+   `git clone https://github.com/juliaozm/project-news.git`
+   `cd project-news`
 
-2. Install the required dependencies: `npm install`
+2. Install the required dependencies:
+   `npm install`
 
 3. Configure the connection in the .env file: Create `.env.test` and `.env.development` in the root folder. In .env files add `PGDATABASE=nc_news_test` and `PGDATABASE=nc_news` respectively
 
-4. Set up the PostgreSQL databases: `npm run setup-dbs`
+4. Set up the PostgreSQL databases:
+   `npm run setup-dbs`
 
-5. Seed databases with the initial data: `npm run seed`
+5. Seed databases with the initial data:
+   `npm run seed`
 
-6. Start the server: `npm start`
+6. Start the server:
+   `npm start`
 
-7. Run tests: `npm test`
+7. Run tests:
+   `cd __tests__`
+   `npm test`
 
 ## Authentication
 
@@ -618,7 +628,7 @@ status 201 Created
 
 #### 4.2. `GET /api/users/:email`
 
-To check if the user exists with a particular email in the database. Protected with JWT: false
+To check if the user exists with a particular email in the database. Protected with JWT: `false`
 
 | Params | Options             |
 | ------ | ------------------- |
@@ -642,7 +652,7 @@ status: 200 OK
 
 #### 4.3. `POST /api/users`
 
-To add user to the database. Protected with JWT: `false`
+To add a new user to the database. Protected with JWT: `false`
 
 The body must contain:
 
