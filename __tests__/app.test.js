@@ -269,7 +269,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -290,7 +289,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -311,7 +309,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -332,7 +329,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -353,7 +349,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -374,7 +369,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -395,7 +389,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -416,7 +409,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -437,7 +429,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -1775,7 +1766,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -1795,7 +1785,6 @@ describe("news-project", () => {
           expect(body).toEqual(
             expect.objectContaining({
               accessToken: expect.any(String),
-              refreshToken: expect.any(String),
             })
           );
         });
@@ -1924,13 +1913,13 @@ describe("news-project", () => {
   });
 
   describe("GET: /api", () => {
-    test("GET: 200 - a get request returns a json object with all 9 available endpoints", () => {
+    test("GET: 200 - a get request returns a json object with all 15 available endpoints", () => {
       return request(app)
         .get("/api")
         .expect(200)
         .then(({ body: { endpointsList } }) => {
           expect(endpointsList).toBeInstanceOf(Object);
-          expect(Object.keys(endpointsList).length).toBe(9);
+          expect(Object.keys(endpointsList).length).toBe(15);
         });
     });
   });

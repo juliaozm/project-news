@@ -1,161 +1,238 @@
 {
   "GET: /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "returns a JSON representation of all the available endpoints of the API",
+    "status": "200 OK"
+  },
+
+  "POST: /api/login": {
+    "description": "user authentication",
+    "requestBody": {
+      "email": "andre_and8@gmail.com",
+      "password": "Calculation12412!"
+    },
+    "status": "201 Created",
+    "exampleResponse": {
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJlbWFpbCI6ImFuZHJlX2FuZDhAZ21haWwuY29tIiwidXNlcm5hbWUiOiJhbmRyZV85MzIzIiwiYXZhdGFyX3VybCI6Imh0dHBzOi8vd3d3LmdyYXZhdGFyLmNvbS9hdmF0YXIvMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA_ZD1tcCZmPXkiLCJpYXQiOjE2ODg1MTYzNzYsImV4cCI6MTY4ODUxNjQwNn0.Qc0Xg2qCrpU2Exom5eVHpoN9W9ME_OKIzJM9RFgl8M"
+    }
+  },
+
+  "GET: /api/refresh_token": {
+    "description": "to refresh an access token",
+    "status": "200 OK",
+    "exampleResponse": {
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJlbWFpbCI6ImFuZHJlX2FuZDhAZ21haWwuY29tIiwidXNlcm5hbWUiOiJhbmRyZV85MzIzIiwiYXZhdGFyX3VybCI6Imh0dHBzOi8vd3d3LmdyYXZhdGFyLmNvbS9hdmF0YXIvMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA_ZD1tcCZmPXkiLCJpYXQiOjE2ODg1MTYzNzYsImV4cCI6MTY4ODUxNjQwNn0.Qc0Xg2qCrpU2Exom5eVHpoN9W9ME_OKIzJM9RFgl8M"
+    }
+  },
+
+  "DELETE: /api/refresh_token": {
+    "description": "to delete a refresh token",
+    "status": "204 No Content"
   },
 
   "GET: /api/topics": {
-    "description": "serves an array of all topics",
-    "queries": [],
+    "description": "to retrieve all the topics",
+    "status": "200 OK",
     "exampleResponse": {
       "topics": [
         {
-          "slug": "football",
-          "description": "Footie!"
+          "slug": "coding",
+          "description": "Code is love, code is life"
         },
         {
-          "slug": "Cookies",
-          "description": "Food?"
+          "slug": "football",
+          "description": "FOOTIE!"
         }
       ]
     }
   },
 
   "GET: /api/articles": {
-    "description": "serves an array of all articles",
+    "description": "to retrieve the articles and a total_count of the specified articles",
     "queries": ["topic", "sort_by", "order", "page", "limit"],
+    "status": "200 OK",
     "exampleResponse": {
-      "total_count": 10,
+      "total_count": 2,
       "articles": [
         {
-          "article_id": 5,
-          "title": "Living in the shadow of a great man",
-          "topic": "mitch",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "votes": 0,
-          "created_at": 1602828180000,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          "comment_count": 2
+          "article_id": 12,
+          "title": "The battle for Node.js security has only begun",
+          "topic": "coding",
+          "author": "tickle122",
+          "body": "The founder of the Node Security Project says Node.js still has common vulnerabilities, but progress has been made to make it more secure. Appearing at the recent Node Community Convention in San Francisco, project founder Adam Baldwin, chief security officer at Web consulting company &yet, emphasized risks, protections, and progress. Baldwin sees four risks within the Node ecosystem pertinent to the enterprise: the code dependency tree, bugs, malicious actors, and people. I think of [the dependency tree] more as the dependency iceberg, to be honest, Baldwin said, where your code is the ship and your dependencies that you have with your packaged JSON is that little tiny iceberg at the top. But developers need to be aware of the massive iceberg underneath, he stressed.",
+          "created_at": "2020-11-15T13:25:00.000Z",
+          "votes": 3,
+          "article_img_url": "https://images.pexels.com/photos/10845119/pexels-photo-10845119.jpeg?w=700&h=700",
+          "comment_count": "7"
         },
         {
-          "article_id": 2,
-          "title": "Eight pug gifs that remind me of mitch",
-          "topic": "mitch",
-          "author": "icellusedkars",
-          "body": "Text from the article..",
-          "votes": 10,
-          "created_at": 1527695953341,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          "comment_count": 12
+          "article_id": 7,
+          "title": "Using React Native: One Year Later",
+          "topic": "coding",
+          "author": "tickle122",
+          "body": "When I interviewed for the iOS developer opening at Discord last spring, the tech lead Stanislav told me: React Native is the future. We will use it to build our iOS app from scratch as soon as it becomes public. As a native iOS developer, I strongly doubted using web technologies to build mobile apps because of my previous experiences with tools like PhoneGap. But after learning and using React Native for a while, I am glad we made that decision.",
+          "created_at": "2020-10-18T01:26:00.000Z",
+          "votes": 1,
+          "article_img_url": "https://images.pexels.com/photos/6424586/pexels-photo-6424586.jpeg?w=700&h=700",
+          "comment_count": "8"
         }
       ]
     }
   },
 
   "GET: /api/articles/:article_id": {
-    "description": "serves an article object",
+    "description": "to retrieve a particular article",
     "params": ["article_id"],
+    "status": "200 OK",
     "exampleResponse": {
       "article": {
-        "article_id": 1,
-        "title": "Seafood substitutions are increasing",
-        "topic": "cooking",
-        "author": "weegembump",
-        "body": "Text from the article..",
-        "created_at": 1527695953341,
+        "article_id": 3,
+        "title": "22 Amazing open source React projects",
+        "topic": "coding",
+        "author": "happyamy2016",
+        "body": "This is a collection of open source apps built with React.JS library. In this observation, we compared nearly 800 projects to pick the top 22. (React Native: 11, React: 11). To evaluate the quality, Mybridge AI considered a variety of factors to determine how useful the projects are for programmers. To give you an idea on the quality, the average number of Github stars from the 22 projects was 1,681.",
+        "created_at": "2020-02-29T11:12:00.000Z",
         "votes": 0,
-        "comment_count": 0,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        "article_img_url": "https://images.pexels.com/photos/11035471/pexels-photo-11035471.jpeg?w=700&h=700",
+        "comment_count": "10"
+      }
+    }
+  },
+
+  "PATCH: /api/articles/:article_id": {
+    "description": "to upvote or downvote for a particular article",
+    "params": ["article_id"],
+    "request body": {
+      "inc_votes": 100
+    },
+    "status": "200 OK",
+    "exampleResponse": {
+      "article": {
+        "article_id": 3,
+        "title": "22 Amazing open source React projects",
+        "topic": "coding",
+        "author": "happyamy2016",
+        "body": "This is a collection of open source apps built with React.JS library. In this observation, we compared nearly 800 projects to pick the top 22. (React Native: 11, React: 11). To evaluate the quality, Mybridge AI considered a variety of factors to determine how useful the projects are for programmers. To give you an idea on the quality, the average number of Github stars from the 22 projects was 1,681.",
+        "created_at": "2020-02-29T11:12:00.000Z",
+        "votes": 100,
+        "article_img_url": "https://images.pexels.com/photos/11035471/pexels-photo-11035471.jpeg?w=700&h=700",
+        "comment_count": "10"
       }
     }
   },
 
   "GET: /api/articles/:article_id/comments": {
-    "description": "serves an array of comments for the given article",
+    "description": "to retrieve all the comments of the given article",
     "params": ["article_id"],
+    "status": "200 OK",
     "exampleResponse": {
       "comments": [
         {
-          "created_at": 1602828180000,
-          "comment_id": 5,
-          "article_id": 1,
-          "votes": 0,
-          "author": "weegembump",
-          "body": "I hate streaming noses"
+          "comment_id": 145,
+          "body": "Odit aut error. Occaecati et qui. Quam nam aut dolorem.",
+          "article_id": 3,
+          "author": "jessjelly",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/4/4f/MR_JELLY_4A.jpg/revision/latest?cb=20180104121141",
+          "votes": 10,
+          "created_at": "2020-10-03T14:18:00.000Z"
         },
         {
-          "created_at": 1594329060000,
-          "comment_id": 1,
-          "article_id": 1,
-          "votes": 10,
-          "author": "weegembump",
-          "body": "Text from the article.."
+          "comment_id": 3,
+          "body": "Qui sunt sit voluptas repellendus sed. Voluptatem et repellat fugiat. Rerum doloribus eveniet quidem vero aut sint officiis. Dolor facere et et architecto vero qui et perferendis dolorem. Magni quis ratione adipisci error assumenda ut. Id rerum eos facere sit nihil ipsam officia aspernatur odio.",
+          "article_id": 3,
+          "author": "grumpy19",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/7/78/Mr-Grumpy-3A.PNG/revision/latest?cb=20170707233013",
+          "votes": 3,
+          "created_at": "2020-09-23T00:18:00.000Z"
         }
       ]
     }
   },
 
   "POST: /api/articles/:article_id/comments": {
-    "description": "serves the posted comment object",
+    "description": "to post a comment",
     "params": ["article_id"],
-    "request body": {
-      "username": "existedUsername",
-      "body": "anyText"
+    "requestBody": {
+      "username": "cooljmessy",
+      "body": "Great!"
     },
+    "status": "201 Created",
     "exampleResponse": {
       "comment": {
-        "created_at": 1674161651000,
-        "comment_id": 19,
-        "article_id": 1,
+        "comment_id": 200,
+        "body": "Great!",
+        "article_id": 3,
+        "author": "cooljmessy",
+        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/1/1a/MR_MESSY_4A.jpg/revision/latest/scale-to-width-down/250?cb=20170730171002",
         "votes": 0,
-        "author": "weegembump",
-        "body": "Great comment!"
+        "created_at": "2020-11-15T09:14:00.000Z"
       }
     }
   },
 
-  "PATCH: /api/articles/:article_id": {
-    "description": "serves the updated article object",
-    "params": ["article_id"],
+  "PATCH: /api/comments/:comment_id": {
+    "description": "to upvote or downvote for a particular comment",
+    "params": ["comment_id"],
     "request body": {
-      "inc_votes": "newVote"
+      "inc_votes": -100
     },
+    "status": "200 OK",
     "exampleResponse": {
-      "article": {
+      "comment": {
+        "comment_id": 200,
+        "body": "Great!",
         "article_id": 3,
-        "title": "Eight pug gifs that remind me of mitch",
-        "topic": "mitch",
-        "author": "weegembump",
-        "body": "some gifs",
-        "created_at": 1674161651000,
-        "votes": 100,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        "author": "cooljmessy",
+        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/1/1a/MR_MESSY_4A.jpg/revision/latest/scale-to-width-down/250?cb=20170730171002",
+        "votes": -100,
+        "created_at": "2020-11-15T09:14:00.000Z"
       }
     }
+  },
+
+  "DELETE: /api/comments/:comment_id": {
+    "description": "to delete a comment",
+    "params": ["comment_id"],
+    "status": "204 No Content"
   },
 
   "GET: /api/users": {
-    "description": "serves an array of all users",
-    "queries": [],
+    "description": "to retrieve all the users",
+    "status": "200 OK",
     "exampleResponse": {
       "users": [
         {
-          "username": "footplayer",
-          "name": "Jack",
-          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'"
+          "email": "weegembump@gmail.com",
+          "username": "weegembump",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/7/7e/MrMen-Bump.png/revision/latest?cb=20180123225553"
         },
         {
-          "username": "icellusedkars",
-          "name": "Sam",
-          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/07/Lime4.jpg'"
+          "email": "jessjelly@gmail.com",
+          "username": "jessjelly",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/4/4f/MR_JELLY_4A.jpg/revision/latest?cb=20180104121141"
         }
       ]
     }
   },
 
-  "DELETE: /api/comments/:comment_id": {
-    "description": "deletes the given comment and responses with no content",
-    "params": ["comment_id"],
-    "exampleResponse": {}
+  "GET: /api/users/:email": {
+    "description": "to check if the user exists",
+    "status": "200 OK",
+    "exampleResponse": {
+      "status": true,
+      "message": "cooljmessy@gmail.com exists"
+    }
+  },
+
+  "POST: /api/users": {
+    "description": "user registration and authentication",
+    "requestBody": {
+      "username": "andre_9323",
+      "email": "andre_and8@gmail.com",
+      "password": "Calculation12412!"
+    },
+    "status": "201 Created",
+    "exampleResponse": {
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJlbWFpbCI6ImFuZHJlX2FuZDhAZ21haWwuY29tIiwidXNlcm5hbWUiOiJhbmRyZV85MzIzIiwiYXZhdGFyX3VybCI6Imh0dHBzOi8vd3d3LmdyYXZhdGFyLmNvbS9hdmF0YXIvMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA_ZD1tcCZmPXkiLCJpYXQiOjE2ODg1MTYwMzUsImV4cCI6MTY4ODUxNjA2NX0.Ja14wMnUc6MLfrQKwlshzu1GYOilggjt42RSPbOhHDI"
+    }
   }
 }
