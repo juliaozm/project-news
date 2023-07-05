@@ -685,4 +685,4 @@ status: 201 Created
 The `accessToken` contains the `username`, `email` and `avatar_url` of the user
 
 ## Created by
-#### [GitHub @juliaozm](github.com/juliaozm)
+#### [GitHub @juliaozm](https://github.com/juliaozm)
