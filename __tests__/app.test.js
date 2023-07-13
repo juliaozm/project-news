@@ -946,9 +946,7 @@ describe("news-project", () => {
         .send(newComment)
         .expect(401)
         .then(({ body: { message } }) => {
-          expect(message).toBe(
-            "You aren't authentificated. Please login again"
-          );
+          expect(message).toBe("Not authentificated. Please login");
         });
     });
   });
@@ -1095,9 +1093,7 @@ describe("news-project", () => {
         .send(votes)
         .expect(401)
         .then(({ body: { message } }) => {
-          expect(message).toBe(
-            "You aren't authentificated. Please login again"
-          );
+          expect(message).toBe("Not authentificated. Please login");
         });
     });
   });
@@ -1248,9 +1244,7 @@ describe("news-project", () => {
         .send(votes)
         .expect(401)
         .then(({ body: { message } }) => {
-          expect(message).toBe(
-            "You aren't authentificated. Please login again"
-          );
+          expect(message).toBe("Not authentificated. Please login");
         });
     });
   });
@@ -1299,9 +1293,7 @@ describe("news-project", () => {
         .get("/api/users")
         .expect(401)
         .then(({ body: { message } }) => {
-          expect(message).toBe(
-            "You aren't authentificated. Please login again"
-          );
+          expect(message).toBe("Not authentificated. Please login");
         });
     });
   });
@@ -1559,9 +1551,7 @@ describe("news-project", () => {
         .delete("/api/comments/1")
         .expect(401)
         .then(({ body: { message } }) => {
-          expect(message).toBe(
-            "You aren't authentificated. Please login again"
-          );
+          expect(message).toBe("Not authentificated. Please login");
         });
     });
   });

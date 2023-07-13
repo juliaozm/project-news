@@ -6,7 +6,7 @@ const authToken = (request, response, next) => {
   if (token == null)
     return response
       .status(401)
-      .json({ message: "You aren't authentificated. Please login again" });
+      .json({ message: "Not authentificated. Please login" });
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
     if (error) return response.status(403).json({ message: error.message });
